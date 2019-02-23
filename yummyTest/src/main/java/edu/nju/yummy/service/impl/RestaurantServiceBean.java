@@ -6,6 +6,8 @@ import edu.nju.yummy.service.RestaurantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+
 @Service
 public class RestaurantServiceBean implements RestaurantService {
     @Autowired
@@ -18,44 +20,57 @@ public class RestaurantServiceBean implements RestaurantService {
     }
 
     @Override
-    public Message changePhone(int restaurantId, String phoneNumber) {
+    public Message update(int restaurantId, String phoneNumber, String name, Address address, String password, String type) {
         Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
+        restaurant.setChecked(false);
         restaurant.setPhoneNumber(phoneNumber);
-        restaurantRepository.save(restaurant);
-        return Message.SUCCESS;
-    }
-
-    @Override
-    public Message changeName(int restaurantId, String name) {
-        Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
         restaurant.setName(name);
-        restaurantRepository.save(restaurant);
-        return Message.SUCCESS;
-    }
-
-    @Override
-    public Message changeAddress(int restaurantId, String address) {
-        Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
         restaurant.setAddress(address);
-        restaurantRepository.save(restaurant);
-        return Message.SUCCESS;
-    }
-
-    @Override
-    public Message changeType(int restaurantId, String type) {
-        Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
-        restaurant.setType(type);
-        restaurantRepository.save(restaurant);
-        return Message.SUCCESS;
-    }
-
-    @Override
-    public Message changePassword(int restaurantId, String password) {
-        Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
         restaurant.setPassword(password);
-        restaurantRepository.save(restaurant);
+        restaurant.setType(type);
         return Message.SUCCESS;
     }
+
+//    @Override
+//    public Message changePhone(int restaurantId, String phoneNumber) {
+//        Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
+//        restaurant.setPhoneNumber(phoneNumber);
+//        restaurant.setChecked(false);
+//        restaurantRepository.save(restaurant);
+//        return Message.SUCCESS;
+//    }
+//
+//    @Override
+//    public Message changeName(int restaurantId, String name) {
+//        Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
+//        restaurant.setName(name);
+//        restaurantRepository.save(restaurant);
+//        return Message.SUCCESS;
+//    }
+//
+//    @Override
+//    public Message changeAddress(int restaurantId, Address address) {
+//        Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
+//        restaurant.setAddress(address);
+//        restaurantRepository.save(restaurant);
+//        return Message.SUCCESS;
+//    }
+//
+//    @Override
+//    public Message changeType(int restaurantId, String type) {
+//        Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
+//        restaurant.setType(type);
+//        restaurantRepository.save(restaurant);
+//        return Message.SUCCESS;
+//    }
+//
+//    @Override
+//    public Message changePassword(int restaurantId, String password) {
+//        Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
+//        restaurant.setPassword(password);
+//        restaurantRepository.save(restaurant);
+//        return Message.SUCCESS;
+//    }
 
     @Override
     public Message login(int restaurantId, String password) {
@@ -69,17 +84,19 @@ public class RestaurantServiceBean implements RestaurantService {
     }
 
     @Override
-    public Message publishSingle(int restaurantId, SingleFoodPack pack) {
+    public Message publishSingle(int restaurantId, Food food) {
         Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
-        restaurant.getSingleFoodPacks().add(pack);
+        restaurant.getSingleFoods().add(food);
+        restaurant.setSingleNum(restaurant.getSingleNum() + 1);
         restaurantRepository.save(restaurant);
         return Message.SUCCESS;
     }
 
     @Override
-    public Message publishCombo(int restaurantId, ComboFoodPack pack) {
+    public Message publishCombo(int restaurantId, ComboFood food) {
         Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
-        restaurant.getComboFoodPacks().add(pack);
+        restaurant.getComboFoods().add(food);
+        restaurant.setComboNum(restaurant.getComboNum() + 1);
         restaurantRepository.save(restaurant);
         return Message.SUCCESS;
     }

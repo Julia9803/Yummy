@@ -1,13 +1,13 @@
 package edu.nju.yummy.service.impl;
 
 import edu.nju.yummy.model.OrderForm;
-import edu.nju.yummy.service.CheckResService;
+import edu.nju.yummy.service.ResCheckService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
 @Service
-public class CheckResServiceBean implements CheckResService {
+public class ResCheckServiceBean implements ResCheckService {
     @Override
     public ArrayList<OrderForm> checkResDeliverRecords(String rid) {
         return null;

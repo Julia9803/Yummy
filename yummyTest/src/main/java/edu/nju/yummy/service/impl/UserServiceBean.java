@@ -1,6 +1,7 @@
 package edu.nju.yummy.service.impl;
 
 import edu.nju.yummy.dao.UserRepository;
+import edu.nju.yummy.model.Address;
 import edu.nju.yummy.model.Message;
 import edu.nju.yummy.model.User;
 import edu.nju.yummy.service.UserService;
@@ -35,7 +36,7 @@ public class UserServiceBean implements UserService {
     }
 
     @Override
-    public Message changeAddress(String phoneNumber, ArrayList<String> addresses) {
+    public Message changeAddress(String phoneNumber, ArrayList<Address> addresses) {
         User user = userRepository.findByPhoneNumber(phoneNumber);
         if(user != null) {
             user.setAddresses(addresses);

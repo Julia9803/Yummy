@@ -7,7 +7,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
@@ -17,54 +16,62 @@ public class RestaurantController {
     @Autowired
     RestaurantServiceBean restaurantServiceBean;
 
+    @RequestMapping(value = "/restaurant",method = RequestMethod.OPTIONS)
+    public void publishInfo(HttpServletRequest req, HttpSession session) {
+        int restaurantId = Integer.parseInt(req.getParameter("restaurantId"));
+        SingleFoodPack singleFoodPack = (SingleFoodPack) session.getAttribute("singleFoodPack");
+        ComboFoodPack comboFoodPack = (ComboFoodPack) session.getAttribute("comboFoodPack");
+        restaurantServiceBean.publishSingle(restaurantId,singleFoodPack);
+        restaurantServiceBean.publishCombo(restaurantId,comboFoodPack);
+    }
+
     @RequestMapping(value = "/restaurant",method = RequestMethod.PUT)
     public void updateRestaurant(HttpServletRequest req, HttpSession session) {
         int restaurantId = Integer.parseInt(req.getParameter("restaurantId"));
         String phoneNumber = req.getParameter("phoneNumber");
         String name = req.getParameter("name");
-        String address = req.getParameter("address");
+        Address address = (Address) session.getAttribute("address");
         String password = req.getParameter("password");
         String type = req.getParameter("type");
-        SingleFoodPack singleFoodPack = (SingleFoodPack) session.getAttribute("singleFoodPack");
-        ComboFoodPack comboFoodPack = (ComboFoodPack) session.getAttribute("comboFoodPack");
 
-        if(name != null) {
-            restaurantServiceBean.changeName(restaurantId,name);
-        }
 
-        if(address != null) {
-            restaurantServiceBean.changeAddress(restaurantId,address);
-        }
-
-        if(password != null) {
-            restaurantServiceBean.changePassword(restaurantId,password);
-        }
-
-        if(phoneNumber != null) {
-            restaurantServiceBean.changePhone(restaurantId,phoneNumber);
-        }
-
-        if(type != null) {
-            restaurantServiceBean.changeType(restaurantId,type);
-        }
-
-        if(singleFoodPack != null) {
-            restaurantServiceBean.publishSingle(restaurantId,singleFoodPack);
-        }
-
-        if(comboFoodPack != null) {
-            restaurantServiceBean.publishCombo(restaurantId,comboFoodPack);
-        }
+//        if(name != null) {
+//            restaurantServiceBean.changeName(restaurantId,name);
+//        }
+//
+//        if(address != null) {
+//            restaurantServiceBean.changeAddress(restaurantId,address);
+//        }
+//
+//        if(password != null) {
+//            restaurantServiceBean.changePassword(restaurantId,password);
+//        }
+//
+//        if(phoneNumber != null) {
+//            restaurantServiceBean.changePhone(restaurantId,phoneNumber);
+//        }
+//
+//        if(type != null) {
+//            restaurantServiceBean.changeType(restaurantId,type);
+//        }
+//
+//        if(singleFoodPack != null) {
+//            restaurantServiceBean.publishSingle(restaurantId,singleFoodPack);
+//        }
+//
+//        if(comboFoodPack != null) {
+//            restaurantServiceBean.publishCombo(restaurantId,comboFoodPack);
+//        }
     }
 
     @RequestMapping(value = "/restaurant",method = RequestMethod.POST)
-    public String restaurantSignUP(HttpServletRequest req, HttpSession session) {
+    public String restaurantSignUp(HttpServletRequest req, HttpSession session) {
         String phoneNumber = req.getParameter("phoneNumber");
         Restaurant restaurant = restaurantServiceBean.findByPhoneNumber(phoneNumber);
         if(restaurant == null) {
             String password = req.getParameter("password");
             String name = req.getParameter("name");
-            String address = req.getParameter("address");
+            Address address = (Address)session.getAttribute("address");
             String type = req.getParameter("type");
             ArrayList<OrderForm> orderForms = new ArrayList<>();
             ArrayList<SingleFoodPack> singleFoodPacks = new ArrayList<>();

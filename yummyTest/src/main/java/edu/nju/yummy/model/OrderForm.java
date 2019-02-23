@@ -19,29 +19,49 @@ public class OrderForm implements Serializable {
     private int orderId;
     private String userPhone;
     private int restaurantId;
+    private Address userAddress;
     private Date time;
     private boolean isCancelled;
     private boolean isPayed;
+    private boolean isDelivering;
     private boolean isDelivered;
     private double discount;
     private double totalMoney;
-    private ArrayList<SingleFoodPack> singleFoodPacks;
-    private ArrayList<ComboFoodPack> comboFoodPacks;
+    private ArrayList<Food> singleFood;
+    private ArrayList<ComboFood> comboFood;
+    private ArrayList<Integer> singleNum;
+    private ArrayList<Integer> comboNum;
 
-    public void setSingleFoodPacks(ArrayList<SingleFoodPack> singleFoodPacks) {
-        this.singleFoodPacks = singleFoodPacks;
+    public ArrayList<Integer> getSingleNum() {
+        return singleNum;
     }
 
-    public ArrayList<SingleFoodPack> getSingleFoodPacks() {
-        return singleFoodPacks;
+    public void setSingleNum(ArrayList<Integer> singleNum) {
+        this.singleNum = singleNum;
     }
 
-    public void setComboFoodPacks(ArrayList<ComboFoodPack> comboFoodPacks) {
-        this.comboFoodPacks = comboFoodPacks;
+    public ArrayList<Integer> getComboNum() {
+        return comboNum;
     }
 
-    public ArrayList<ComboFoodPack> getComboFoodPacks() {
-        return comboFoodPacks;
+    public void setComboNum(ArrayList<Integer> comboNum) {
+        this.comboNum = comboNum;
+    }
+
+    public ArrayList<ComboFood> getComboFood() {
+        return comboFood;
+    }
+
+    public void setComboFood(ArrayList<ComboFood> comboFood) {
+        this.comboFood = comboFood;
+    }
+
+    public ArrayList<Food> getSingleFood() {
+        return singleFood;
+    }
+
+    public void setSingleFood(ArrayList<Food> singleFood) {
+        this.singleFood = singleFood;
     }
 
     public void setRestaurantId(int restaurantId) {
@@ -50,6 +70,14 @@ public class OrderForm implements Serializable {
 
     public int getRestaurantId() {
         return restaurantId;
+    }
+
+    public Address getUserAddress() {
+        return userAddress;
+    }
+
+    public void setUserAddress(Address userAddress) {
+        this.userAddress = userAddress;
     }
 
     public int getOrderId() {
@@ -82,6 +110,14 @@ public class OrderForm implements Serializable {
 
     public boolean isPayed() {
         return isPayed;
+    }
+
+    public boolean isDelivering() {
+        return isDelivering;
+    }
+
+    public void setDelivering(boolean delivering) {
+        isDelivering = delivering;
     }
 
     public void setDelivered(boolean delivered) {

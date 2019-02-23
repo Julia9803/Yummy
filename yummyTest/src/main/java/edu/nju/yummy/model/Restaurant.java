@@ -16,12 +16,15 @@ public class Restaurant implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int restaurantId;
     private String name;
-    private String address;
+    private Address address;
     private String type;
     private String password;
     private String phoneNumber;
-    private ArrayList<SingleFoodPack> singleFoodPacks;
-    private ArrayList<ComboFoodPack> comboFoodPacks;
+    private boolean isChecked;
+    private ArrayList<Food> singleFoods;
+    private ArrayList<ComboFood> comboFoods;
+    private ArrayList<Integer> singleNum;
+    private ArrayList<Integer> comboNum;
     private ArrayList<OrderForm> orderForms;
 
     public void setRestaurantId(int restaurantId) {
@@ -64,27 +67,51 @@ public class Restaurant implements Serializable {
         this.phoneNumber = phoneNumber;
     }
 
-    public ArrayList<ComboFoodPack> getComboFoodPacks() {
-        return comboFoodPacks;
+    public boolean isChecked() {
+        return isChecked;
     }
 
-    public void setComboFoodPacks(ArrayList<ComboFoodPack> comboFoodPacks) {
-        this.comboFoodPacks = comboFoodPacks;
+    public void setChecked(boolean checked) {
+        isChecked = checked;
     }
 
-    public ArrayList<SingleFoodPack> getSingleFoodPacks() {
-        return singleFoodPacks;
+    public ArrayList<ComboFood> getComboFoods() {
+        return comboFoods;
     }
 
-    public void setSingleFoodPacks(ArrayList<SingleFoodPack> singleFoodPacks) {
-        this.singleFoodPacks = singleFoodPacks;
+    public void setComboFoods(ArrayList<ComboFood> comboFoods) {
+        this.comboFoods = comboFoods;
     }
 
-    public String getAddress() {
+    public ArrayList<Food> getSingleFoods() {
+        return singleFoods;
+    }
+
+    public void setSingleFoods(ArrayList<Food> singleFoods) {
+        this.singleFoods = singleFoods;
+    }
+
+    public ArrayList<Integer> getComboNum() {
+        return comboNum;
+    }
+
+    public void setComboNum(ArrayList<Integer> comboNum) {
+        this.comboNum = comboNum;
+    }
+
+    public ArrayList<Integer> getSingleNum() {
+        return singleNum;
+    }
+
+    public void setSingleNum(ArrayList<Integer> singleNum) {
+        this.singleNum = singleNum;
+    }
+
+    public Address getAddress() {
         return address;
     }
 
-    public void setAddress(String address) {
+    public void setAddress(Address address) {
         this.address = address;
     }
 

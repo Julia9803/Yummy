@@ -1,5 +1,6 @@
 package edu.nju.yummy.controller;
 
+import edu.nju.yummy.model.Address;
 import edu.nju.yummy.model.Message;
 import edu.nju.yummy.model.OrderForm;
 import edu.nju.yummy.model.User;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 @Controller
 public class UserController {
@@ -26,8 +26,8 @@ public class UserController {
         if(user == null) {
             String password = req.getParameter("password");
             String name = req.getParameter("name");
-            ArrayList<String> addresses = new ArrayList<>();
-            addresses.add(req.getParameter("address"));
+            ArrayList<Address> addresses = new ArrayList<>();
+            addresses.add((Address)session.getAttribute("address"));
             String email = req.getParameter("email");
             boolean isCancelled = false;
             int grade = 1;
@@ -74,12 +74,10 @@ public class UserController {
     }
 
     @RequestMapping(value = "/user",method = RequestMethod.PUT)
-    public void updateUser(HttpServletRequest req) {
+    public void updateUser(HttpServletRequest req,HttpSession session) {
         String phoneNumber = req.getParameter("phoneNumber");
         String name = req.getParameter("name");
-        String address = req.getParameter("addresses");
-        String[] strings = address.split("#");
-        ArrayList<String> addresses = new ArrayList<>(Arrays.asList(strings));
+        ArrayList<Address> addresses = (ArrayList<Address>)session.getAttribute("addresses");
         String isCancel = req.getParameter("isCancel"); // 0 1
         String password = req.getParameter("password");
 

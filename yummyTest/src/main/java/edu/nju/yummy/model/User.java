@@ -19,7 +19,7 @@ public class User implements Serializable {
     private String password;
     private String email;
     private String name;
-    private ArrayList<String> addresses;
+    private ArrayList<Address> addresses;
     private boolean isCancelled;
     private int grade;
     private ArrayList<OrderForm> orderForms;
@@ -41,11 +41,11 @@ public class User implements Serializable {
         this.name = name;
     }
 
-    public ArrayList<String> getAddresses() {
+    public ArrayList<Address> getAddresses() {
         return addresses;
     }
 
-    public void setAddresses(ArrayList<String> addresses) {
+    public void setAddresses(ArrayList<Address> addresses) {
         this.addresses = addresses;
     }
 

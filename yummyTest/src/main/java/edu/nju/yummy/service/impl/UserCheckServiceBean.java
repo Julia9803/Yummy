@@ -1,13 +1,13 @@
 package edu.nju.yummy.service.impl;
 
 import edu.nju.yummy.model.OrderForm;
-import edu.nju.yummy.service.CheckUserService;
+import edu.nju.yummy.service.UserCheckService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
 @Service
-public class CheckUserServiceBean implements CheckUserService {
+public class UserCheckServiceBean implements UserCheckService {
 
     @Override
     public String checkUserOrderState(String oid) {

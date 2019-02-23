@@ -4,7 +4,7 @@ import edu.nju.yummy.model.OrderForm;
 
 import java.util.ArrayList;
 
-public interface CheckResService {
+public interface ResCheckService {
     ArrayList<OrderForm> checkResDeliverRecords(String rid);
     ArrayList<OrderForm> checkResOrderInfoByTime(String rid);
     ArrayList<OrderForm> checkResOrderInfoByMoney(String rid);

@@ -1,5 +1,5 @@
 package edu.nju.yummy.model;
 
 public enum Message {
-    SUCCESS, FAIL, NOTFOUND
+    SUCCESS, FAIL, NOTFOUND, OVERTIME, DELIVERED, DELIVERING, BALANCELOW
 }
