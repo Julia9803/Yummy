@@ -13,24 +13,26 @@ public class ComboFood implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
-    private ArrayList<Food> foods;
+    private int comboId;
+    private ArrayList<Integer> foodIds;
     private double price;
+    private String restaurantIdCode;
 
-    public void setFoods(ArrayList<Food> foods) {
-        this.foods = foods;
+
+    public ArrayList<Integer> getFoodIds() {
+        return foodIds;
     }
 
-    public ArrayList<Food> getFoods() {
-        return foods;
+    public void setFoodIds(ArrayList<Integer> foodIds) {
+        this.foodIds = foodIds;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public int getComboId() {
+        return comboId;
     }
 
-    public int getId() {
-        return id;
+    public void setComboId(int comboId) {
+        this.comboId = comboId;
     }
 
     public double getPrice() {
@@ -39,5 +41,13 @@ public class ComboFood implements Serializable {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public String getRestaurantIdCode() {
+        return restaurantIdCode;
+    }
+
+    public void setRestaurantIdCode(String restaurantIdCode) {
+        this.restaurantIdCode = restaurantIdCode;
     }
 }

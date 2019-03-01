@@ -1,5 +1,7 @@
 package edu.nju.yummy.service.impl;
 
+import edu.nju.yummy.dao.ComboFoodRepository;
+import edu.nju.yummy.dao.FoodRepository;
 import edu.nju.yummy.dao.RestaurantRepository;
 import edu.nju.yummy.model.*;
 import edu.nju.yummy.service.RestaurantService;
@@ -12,6 +14,10 @@ import java.util.ArrayList;
 public class RestaurantServiceBean implements RestaurantService {
     @Autowired
     RestaurantRepository restaurantRepository;
+    @Autowired
+    FoodRepository foodRepository;
+    @Autowired
+    ComboFoodRepository comboFoodRepository;
 
     @Override
     public Message register(Restaurant restaurant) {
@@ -20,12 +26,12 @@ public class RestaurantServiceBean implements RestaurantService {
     }
 
     @Override
-    public Message update(int restaurantId, String phoneNumber, String name, Address address, String password, String type) {
-        Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
+    public Message update(String idCode, String phoneNumber, String name, String password, String type) {
+        Restaurant restaurant = restaurantRepository.findByIdCode(idCode);
         restaurant.setChecked(false);
+        restaurant.setIdCode(idCode);
         restaurant.setPhoneNumber(phoneNumber);
         restaurant.setName(name);
-        restaurant.setAddress(address);
         restaurant.setPassword(password);
         restaurant.setType(type);
         return Message.SUCCESS;
@@ -73,8 +79,8 @@ public class RestaurantServiceBean implements RestaurantService {
 //    }
 
     @Override
-    public Message login(int restaurantId, String password) {
-        Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
+    public Message login(String idCode, String password) {
+        Restaurant restaurant = restaurantRepository.findByIdCode(idCode);
         if(restaurant == null) {
             return Message.NOTFOUND;
         } else if(restaurant.getPassword().equals(password)) {
@@ -84,19 +90,19 @@ public class RestaurantServiceBean implements RestaurantService {
     }
 
     @Override
-    public Message publishSingle(int restaurantId, Food food) {
-        Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
-        restaurant.getSingleFoods().add(food);
-        restaurant.setSingleNum(restaurant.getSingleNum() + 1);
+    public Message publishSingle(String idCode, Food food, int num) {
+        Restaurant restaurant = restaurantRepository.findByIdCode(idCode);
+        foodRepository.save(food);
+        restaurant.getSingleNum().add(num + 1);
         restaurantRepository.save(restaurant);
         return Message.SUCCESS;
     }
 
     @Override
-    public Message publishCombo(int restaurantId, ComboFood food) {
-        Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
-        restaurant.getComboFoods().add(food);
-        restaurant.setComboNum(restaurant.getComboNum() + 1);
+    public Message publishCombo(String idCode, ComboFood comboFood, int num) {
+        Restaurant restaurant = restaurantRepository.findByIdCode(idCode);
+        comboFoodRepository.save(comboFood);
+        restaurant.getComboNum().add(num + 1);
         restaurantRepository.save(restaurant);
         return Message.SUCCESS;
     }
@@ -105,6 +111,11 @@ public class RestaurantServiceBean implements RestaurantService {
     public Restaurant findById(int id) {
         Restaurant restaurant = restaurantRepository.findByRestaurantId(id);
         return restaurant;
+    }
+
+    @Override
+    public Restaurant findByIdCode(String idCode) {
+        return restaurantRepository.findByIdCode(idCode);
     }
 
     @Override

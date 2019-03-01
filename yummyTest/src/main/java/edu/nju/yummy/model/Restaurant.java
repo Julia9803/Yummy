@@ -15,17 +15,18 @@ public class Restaurant implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int restaurantId;
+    private String idCode;
     private String name;
-    private Address address;
     private String type;
     private String password;
     private String phoneNumber;
-    private boolean isChecked;
-    private ArrayList<Food> singleFoods;
-    private ArrayList<ComboFood> comboFoods;
+    private boolean checked;
+    private double income;
+//    private ArrayList<Food> singleFoods;
+//    private ArrayList<ComboFood> comboFoods;
     private ArrayList<Integer> singleNum;
     private ArrayList<Integer> comboNum;
-    private ArrayList<OrderForm> orderForms;
+//    private ArrayList<OrderForm> orderForms;
 
     public void setRestaurantId(int restaurantId) {
         this.restaurantId = restaurantId;
@@ -33,6 +34,14 @@ public class Restaurant implements Serializable {
 
     public int getRestaurantId() {
         return restaurantId;
+    }
+
+    public String getIdCode() {
+        return idCode;
+    }
+
+    public void setIdCode(String idCode) {
+        this.idCode = idCode;
     }
 
     public String getName() {
@@ -68,27 +77,19 @@ public class Restaurant implements Serializable {
     }
 
     public boolean isChecked() {
-        return isChecked;
+        return checked;
     }
 
     public void setChecked(boolean checked) {
-        isChecked = checked;
+        this.checked = checked;
     }
 
-    public ArrayList<ComboFood> getComboFoods() {
-        return comboFoods;
+    public double getIncome() {
+        return income;
     }
 
-    public void setComboFoods(ArrayList<ComboFood> comboFoods) {
-        this.comboFoods = comboFoods;
-    }
-
-    public ArrayList<Food> getSingleFoods() {
-        return singleFoods;
-    }
-
-    public void setSingleFoods(ArrayList<Food> singleFoods) {
-        this.singleFoods = singleFoods;
+    public void setIncome(double income) {
+        this.income = income;
     }
 
     public ArrayList<Integer> getComboNum() {
@@ -105,21 +106,5 @@ public class Restaurant implements Serializable {
 
     public void setSingleNum(ArrayList<Integer> singleNum) {
         this.singleNum = singleNum;
-    }
-
-    public Address getAddress() {
-        return address;
-    }
-
-    public void setAddress(Address address) {
-        this.address = address;
-    }
-
-    public ArrayList<OrderForm> getOrderForms() {
-        return orderForms;
-    }
-
-    public void setOrderForms(ArrayList<OrderForm> orderForms) {
-        this.orderForms = orderForms;
     }
 }

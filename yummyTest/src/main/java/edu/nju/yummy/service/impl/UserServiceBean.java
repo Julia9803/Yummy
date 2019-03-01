@@ -1,5 +1,6 @@
 package edu.nju.yummy.service.impl;
 
+import edu.nju.yummy.dao.AddressRepository;
 import edu.nju.yummy.dao.UserRepository;
 import edu.nju.yummy.model.Address;
 import edu.nju.yummy.model.Message;
@@ -14,6 +15,8 @@ import java.util.ArrayList;
 public class UserServiceBean implements UserService {
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    AddressRepository addressRepository;
 
     @Override
     public Message register(User user) {
@@ -25,8 +28,8 @@ public class UserServiceBean implements UserService {
     }
 
     @Override
-    public Message changeName(String phoneNumber, String name) {
-        User user = userRepository.findByPhoneNumber(phoneNumber);
+    public Message changeName(String email, String name) {
+        User user = userRepository.findByEmail(email);
         if(user != null) {
             user.setName(name);
             userRepository.save(user);
@@ -36,34 +39,48 @@ public class UserServiceBean implements UserService {
     }
 
     @Override
-    public Message changeAddress(String phoneNumber, ArrayList<Address> addresses) {
-        User user = userRepository.findByPhoneNumber(phoneNumber);
+    public Message changeAddress(String email, Address address) {
+        User user = userRepository.findByEmail(email);
         if(user != null) {
-            user.setAddresses(addresses);
-            userRepository.save(user);
+            Address address1 = addressRepository.findById(address.getId());
+            address1.setProvince(address.getProvince());
+            address1.setCity(address.getCity());
+            address1.setDistrict(address.getDistrict());
+            address1.setDetail(address.getDetail());
+            address1.setCode(email);
+            addressRepository.save(address1);
             return Message.SUCCESS;
         }
         return Message.FAIL;
     }
 
     @Override
-    public Message cancel(String phoneNumber) {
-        User user = userRepository.findByPhoneNumber(phoneNumber);
+    public Message addAddress(String email, Address address) {
+        if(address != null) {
+            addressRepository.save(address);
+            return Message.SUCCESS;
+        }
+        return Message.FAIL;
+    }
+
+    @Override
+    public Message cancel(String email) {
+        User user = userRepository.findByEmail(email);
         user.setCancelled(true);
         userRepository.save(user);
         return Message.SUCCESS;
     }
 
     @Override
-    public Message changePassword(String phoneNumber, String password) {
-        User user = userRepository.findByPhoneNumber(phoneNumber);
+    public Message changePassword(String email, String password) {
+        User user = userRepository.findByEmail(email);
         user.setPassword(password);
         return Message.SUCCESS;
     }
 
     @Override
-    public Message login(String phoneNumber, String password) {
-        User user = userRepository.findByPhoneNumber(phoneNumber);
+    public Message login(String email, String password) {
+        User user = userRepository.findByEmail(email);
         if(user != null && user.getPassword().equals(password)) {
             return Message.SUCCESS;
         } else if(user == null) {
@@ -73,11 +90,37 @@ public class UserServiceBean implements UserService {
     }
 
     @Override
-    public User findByPhoneNumber(String phoneNumber) {
-        User user = userRepository.findByPhoneNumber(phoneNumber);
-        if(user.isCancelled()) {
+    public Message delAddress(String email, int aid) {
+        Address address = addressRepository.findById(aid);
+        if(address != null) {
+            addressRepository.deleteById(aid);
+            return Message.SUCCESS;
+        }
+        return Message.NOTFOUND;
+    }
+
+    @Override
+    public User findByPhoneNumber(String email) {
+        User user = userRepository.findByEmail(email);
+        if(user == null || user.isCancelled()) {
             return null;
         }
         return user;
     }
+
+    @Override
+    public User findByEmail(String email) {
+        User user = userRepository.findByEmail(email);
+        if(user == null || user.isCancelled()) {
+            return null;
+        }
+        return user;
+    }
+
+    @Override
+    public ArrayList<Address> findAddressByEmail(String email) {
+        return addressRepository.findByCode(email);
+    }
+
+
 }

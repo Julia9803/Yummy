@@ -15,6 +15,7 @@ public class Address implements Serializable {
     private String city;
     private String district;
     private String detail;
+    private String code; // user:email res:idCode
 
     public int getId() {
         return id;
@@ -54,5 +55,13 @@ public class Address implements Serializable {
 
     public void setProvince(String province) {
         this.province = province;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 }

@@ -10,6 +10,9 @@ import java.util.ArrayList;
 public interface UserRepository extends CrudRepository<User,Integer> {
     User save(User user);
     User findByPhoneNumber(String phoneNumber);
+    User findByEmail(String email);
     ArrayList<User> findAll();
+    long count();
+    long countByGrade(int grade);
     void delete(User user);
 }

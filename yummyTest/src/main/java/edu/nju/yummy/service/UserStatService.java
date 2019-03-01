@@ -3,8 +3,7 @@ import edu.nju.yummy.model.OrderForm;
 
 import java.util.ArrayList;
 
-public interface UserCheckService {
-    String checkUserOrderState(String oid);
+public interface UserStatService {
     ArrayList<OrderForm> checkUserOrderInfoByTime(String phoneNumber);
     ArrayList<OrderForm> checkUserOrderInfoByMoney(String phoneNumber);
     ArrayList<OrderForm> checkUserOrderInfoByRestaurant(String phoneNumber);

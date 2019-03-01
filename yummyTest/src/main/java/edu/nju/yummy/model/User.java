@@ -19,11 +19,9 @@ public class User implements Serializable {
     private String password;
     private String email;
     private String name;
-    private ArrayList<Address> addresses;
     private boolean isCancelled;
+    private double totalSpend;
     private int grade;
-    private ArrayList<OrderForm> orderForms;
-
 
     public int getUserId() {
         return userId;
@@ -41,20 +39,20 @@ public class User implements Serializable {
         this.name = name;
     }
 
-    public ArrayList<Address> getAddresses() {
-        return addresses;
-    }
-
-    public void setAddresses(ArrayList<Address> addresses) {
-        this.addresses = addresses;
-    }
-
     public boolean isCancelled() {
         return isCancelled;
     }
 
     public void setCancelled(boolean cancelled) {
         isCancelled = cancelled;
+    }
+
+    public double getTotalSpend() {
+        return totalSpend;
+    }
+
+    public void setTotalSpend(double totalSpend) {
+        this.totalSpend = totalSpend;
     }
 
     public int getGrade() {
@@ -87,13 +85,5 @@ public class User implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public ArrayList<OrderForm> getOrderForms() {
-        return orderForms;
-    }
-
-    public void setOrderForms(ArrayList<OrderForm> orderForms) {
-        this.orderForms = orderForms;
     }
 }

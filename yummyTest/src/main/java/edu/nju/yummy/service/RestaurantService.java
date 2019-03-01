@@ -9,10 +9,11 @@ public interface RestaurantService {
 //    Message changeAddress(int restaurantId, Address address);
 //    Message changeType(int restaurantId, String type);
 //    Message changePassword(int restaurantId, String password);
-    Message update( int restaurantId, String phoneNumber,String name,Address address,String password,String type);
-    Message login(int restaurantId, String password);
-    Message publishSingle(int restaurantId, Food food);
-    Message publishCombo(int restaurantId, ComboFood food);
+    Message update(String idCode,String phoneNumber,String name,String password,String type);
+    Message login(String idCode, String password);
+    Message publishSingle(String idCode, Food food, int num);
+    Message publishCombo(String idCode, ComboFood food, int num);
     Restaurant findById(int id);
+    Restaurant findByIdCode(String idCode);
     Restaurant findByPhoneNumber(String phoneNumber);
 }

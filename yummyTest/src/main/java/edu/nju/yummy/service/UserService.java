@@ -8,10 +8,14 @@ import java.util.ArrayList;
 
 public interface UserService {
     Message register(User user);
-    Message changeName(String phoneNumber, String name);
-    Message changeAddress(String phoneNumber, ArrayList<Address> addresses);
-    Message cancel(String phoneNumber);
-    Message changePassword(String phoneNumber, String password);
-    Message login(String phoneNumber, String password);
-    User findByPhoneNumber(String phoneNumber);
+    Message changeName(String email, String name);
+    Message changeAddress(String email, Address address);
+    Message addAddress(String email, Address address);
+    Message cancel(String email);
+    Message changePassword(String email, String password);
+    Message login(String email, String password);
+    Message delAddress(String email, int aid);
+    User findByPhoneNumber(String email);
+    User findByEmail(String email);
+    ArrayList<Address> findAddressByEmail(String email);
 }

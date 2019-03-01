@@ -16,7 +16,7 @@ public class Food implements Serializable {
     private int foodId;
     private String name;
     private double price;
-    private String restaurantId;
+    private String restaurantIdCode;
 
     public int getFoodId() {
         return foodId;
@@ -43,10 +43,10 @@ public class Food implements Serializable {
     }
 
     public String getRestaurantId() {
-        return restaurantId;
+        return restaurantIdCode;
     }
 
     public void setRestaurantId(String restaurantId) {
-        this.restaurantId = restaurantId;
+        this.restaurantIdCode = restaurantId;
     }
 }

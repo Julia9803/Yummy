@@ -11,6 +11,8 @@ public interface RestaurantRepository extends CrudRepository<Restaurant,Integer>
     Restaurant save(Restaurant restaurant);
     Restaurant findByRestaurantId(int id);
     Restaurant findByPhoneNumber(String phoneNumber);
-    ArrayList<Restaurant> findByChecked(boolean isChecked);
+    Restaurant findByIdCode(String idCode);
+    ArrayList<Restaurant> findByCheckedFalse();
     ArrayList<Restaurant> findAll();
+    long count();
 }

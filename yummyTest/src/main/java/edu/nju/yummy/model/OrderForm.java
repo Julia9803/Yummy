@@ -21,12 +21,14 @@ public class OrderForm implements Serializable {
     private int restaurantId;
     private Address userAddress;
     private Date time;
-    private boolean isCancelled;
-    private boolean isPayed;
-    private boolean isDelivering;
-    private boolean isDelivered;
+    private boolean cancelled;
+    private boolean payed;
+    private boolean delivering;
+    private boolean delivered;
+    private boolean ensureDelivered;
     private double discount;
-    private double totalMoney;
+    private double orderMoney; // 原价
+    private double totalMoney; // 打折后
     private ArrayList<Food> singleFood;
     private ArrayList<ComboFood> comboFood;
     private ArrayList<Integer> singleNum;
@@ -104,36 +106,52 @@ public class OrderForm implements Serializable {
         this.time = time;
     }
 
-    public void setPayed(boolean payed) {
-        isPayed = payed;
+    public boolean isPayed() {
+        return payed;
     }
 
-    public boolean isPayed() {
-        return isPayed;
+    public void setPayed(boolean payed) {
+        this.payed = payed;
     }
 
     public boolean isDelivering() {
-        return isDelivering;
+        return delivering;
     }
 
     public void setDelivering(boolean delivering) {
-        isDelivering = delivering;
-    }
-
-    public void setDelivered(boolean delivered) {
-        isDelivered = delivered;
+        this.delivering = delivering;
     }
 
     public boolean isDelivered() {
-        return isDelivered;
+        return delivered;
+    }
+
+    public void setDelivered(boolean delivered) {
+        this.delivered = delivered;
+    }
+
+    public boolean isEnsureDelivered() {
+        return ensureDelivered;
+    }
+
+    public void setEnsureDelivered(boolean ensureDelivered) {
+        this.ensureDelivered = ensureDelivered;
     }
 
     public boolean isCancelled() {
-        return isCancelled;
+        return cancelled;
     }
 
     public void setCancelled(boolean cancelled) {
-        isCancelled = cancelled;
+        this.cancelled = cancelled;
+    }
+
+    public double getOrderMoney() {
+        return orderMoney;
+    }
+
+    public void setOrderMoney(double orderMoney) {
+        this.orderMoney = orderMoney;
     }
 
     public void setTotalMoney(double totalMoney) {
