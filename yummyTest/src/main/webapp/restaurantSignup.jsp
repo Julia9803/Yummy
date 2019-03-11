@@ -1,4 +1,4 @@
-<%@ page import="edu.nju.yummy.model.Address" %><%--
+<%@ page import="edu.nju.yummy.entity.Address" %><%--
   Created by IntelliJ IDEA.
   User: julia98
   Date: 2019/3/1
@@ -41,7 +41,7 @@
             <form class="am-form" action="/restaurant" method="post">
                 <fieldset>
                     <div class="am-form-group">
-                        <input type="text" class="" name="code" id="code" value="<%=session.getAttribute("resCode")%>" required>
+                        <input type="text" class="" name="code" id="code" readonly>
                     </div>
                     <button type="button" id="btnSendCode" name="btnSendCode" style="margin-bottom: 5px;"
                             class="myapp-login-button am-btn am-btn-secondary"
@@ -52,49 +52,25 @@
                             $.ajax({
                                 url:"/resCode",
                                 type:"GET",
-                                async: false
+                                async: false,
+                                success: function(data) {
+                                    document.getElementById("code").value = data;
+                                }
                             })
                         }
                     </script>
-                    <%
-                        Address address = (Address) session.getAttribute("address");
-                        String province = "";
-                        String city = "";
-                        String district = "";
-                        String detail = "";
-                        if(address != null) {
-                            province = address.getProvince();
-                            city = address.getCity();
-                            district = address.getDistrict();
-                            detail = address.getDetail();
-                        }
-                    %>
                     <div class="am-form-group">
-                        <input type="text" class="" id="province" name="province" value="<%=province%>" placeholder="输入省" required>
+                        <input type="text" class="" id="province" name="province" placeholder="输入省" required>
                     </div>
                     <div class="am-form-group">
-                        <input type="text" class="" id="city" name="city" value="<%=city%>" placeholder="输入市" required>
+                        <input type="text" class="" id="city" name="city" placeholder="输入市" required>
                     </div>
                     <div class="am-form-group">
-                        <input type="text" class="" id="district" name="district" value="<%=district%>" placeholder="输入区" required>
+                        <input type="text" class="" id="district" name="district" placeholder="输入区" required>
                     </div>
                     <div class="am-form-group">
-                        <input type="text" class="" id="detail" name="detail" value="<%=detail%>" placeholder="输入具体街道门牌号" required>
+                        <input type="text" class="" id="detail" name="detail" placeholder="输入具体街道门牌号" required>
                     </div>
-                    <button type="button" id="submitAddress" onclick="submitAddress()" class="am-btn am-btn-default">确认地址</button>
-                    <script>
-                        function submitAddress() {
-                            let idCode = document.getElementById("code").value;
-                            let province = document.getElementById("province").value;
-                            let city = document.getElementById("city").value;
-                            let district = document.getElementById("district").value;
-                            let detail = document.getElementById("detail").value;
-                            $.ajax({
-                                url:"/resAddress?province="+province+"&city="+city+"&district="+district+"&detail="+detail+"&idCode="+idCode,
-                                type:"POST",
-                            })
-                        }
-                    </script>
                     <div class="am-form-group">
                         <input type="text" class="" name="phoneNumber" placeholder="输入手机号码" required>
                     </div>

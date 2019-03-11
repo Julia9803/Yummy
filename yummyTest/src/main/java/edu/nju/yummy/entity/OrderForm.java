@@ -1,4 +1,4 @@
-package edu.nju.yummy.model;
+package edu.nju.yummy.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,8 +18,8 @@ public class OrderForm implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int orderId;
     private String userPhone;
-    private int restaurantId;
-    private Address userAddress;
+    private String restaurantIdCode;
+    private int userAddressId;
     private Date time;
     private boolean cancelled;
     private boolean payed;
@@ -29,57 +29,22 @@ public class OrderForm implements Serializable {
     private double discount;
     private double orderMoney; // 原价
     private double totalMoney; // 打折后
-    private ArrayList<Food> singleFood;
-    private ArrayList<ComboFood> comboFood;
-    private ArrayList<Integer> singleNum;
-    private ArrayList<Integer> comboNum;
 
-    public ArrayList<Integer> getSingleNum() {
-        return singleNum;
+
+    public String getRestaurantIdCode() {
+        return restaurantIdCode;
     }
 
-    public void setSingleNum(ArrayList<Integer> singleNum) {
-        this.singleNum = singleNum;
+    public void setRestaurantIdCode(String restaurantIdCode) {
+        this.restaurantIdCode = restaurantIdCode;
     }
 
-    public ArrayList<Integer> getComboNum() {
-        return comboNum;
+    public int getUserAddressId() {
+        return userAddressId;
     }
 
-    public void setComboNum(ArrayList<Integer> comboNum) {
-        this.comboNum = comboNum;
-    }
-
-    public ArrayList<ComboFood> getComboFood() {
-        return comboFood;
-    }
-
-    public void setComboFood(ArrayList<ComboFood> comboFood) {
-        this.comboFood = comboFood;
-    }
-
-    public ArrayList<Food> getSingleFood() {
-        return singleFood;
-    }
-
-    public void setSingleFood(ArrayList<Food> singleFood) {
-        this.singleFood = singleFood;
-    }
-
-    public void setRestaurantId(int restaurantId) {
-        this.restaurantId = restaurantId;
-    }
-
-    public int getRestaurantId() {
-        return restaurantId;
-    }
-
-    public Address getUserAddress() {
-        return userAddress;
-    }
-
-    public void setUserAddress(Address userAddress) {
-        this.userAddress = userAddress;
+    public void setUserAddressId(int userAddressId) {
+        this.userAddressId = userAddressId;
     }
 
     public int getOrderId() {

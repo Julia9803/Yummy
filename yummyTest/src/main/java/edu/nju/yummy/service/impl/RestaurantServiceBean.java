@@ -1,8 +1,10 @@
 package edu.nju.yummy.service.impl;
 
-import edu.nju.yummy.dao.ComboFoodRepository;
-import edu.nju.yummy.dao.FoodRepository;
-import edu.nju.yummy.dao.RestaurantRepository;
+import edu.nju.yummy.dao.*;
+import edu.nju.yummy.entity.Address;
+import edu.nju.yummy.entity.ComboFood;
+import edu.nju.yummy.entity.Food;
+import edu.nju.yummy.entity.Restaurant;
 import edu.nju.yummy.model.*;
 import edu.nju.yummy.service.RestaurantService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,65 +20,39 @@ public class RestaurantServiceBean implements RestaurantService {
     FoodRepository foodRepository;
     @Autowired
     ComboFoodRepository comboFoodRepository;
+    @Autowired
+    AddressRepository addressRepository;
 
     @Override
     public Message register(Restaurant restaurant) {
+        restaurant.setIncome(0);
         restaurantRepository.save(restaurant);
         return Message.SUCCESS;
     }
 
     @Override
-    public Message update(String idCode, String phoneNumber, String name, String password, String type) {
+    public Message update(String idCode, String phoneNumber, String name, String password, String type,Address address) {
         Restaurant restaurant = restaurantRepository.findByIdCode(idCode);
         restaurant.setChecked(false);
-        restaurant.setIdCode(idCode);
         restaurant.setPhoneNumber(phoneNumber);
-        restaurant.setName(name);
         restaurant.setPassword(password);
-        restaurant.setType(type);
+        restaurant.setChangeName(name); // 待审核
+        restaurant.setChangeType(type); // 待审核
+        restaurantRepository.save(restaurant);
+        Address address1 = addressRepository.findByCode(idCode).get(0);
+        address1.setChangeProvince(address.getProvince()); // 待审核
+        address1.setChangeCity(address.getCity()); // 待审核
+        address1.setChangeDistrict(address.getDistrict()); // 待审核
+        address1.setChangeDetail(address.getDetail()); // 待审核
+        addressRepository.save(address1);
         return Message.SUCCESS;
     }
 
-//    @Override
-//    public Message changePhone(int restaurantId, String phoneNumber) {
-//        Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
-//        restaurant.setPhoneNumber(phoneNumber);
-//        restaurant.setChecked(false);
-//        restaurantRepository.save(restaurant);
-//        return Message.SUCCESS;
-//    }
-//
-//    @Override
-//    public Message changeName(int restaurantId, String name) {
-//        Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
-//        restaurant.setName(name);
-//        restaurantRepository.save(restaurant);
-//        return Message.SUCCESS;
-//    }
-//
-//    @Override
-//    public Message changeAddress(int restaurantId, Address address) {
-//        Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
-//        restaurant.setAddress(address);
-//        restaurantRepository.save(restaurant);
-//        return Message.SUCCESS;
-//    }
-//
-//    @Override
-//    public Message changeType(int restaurantId, String type) {
-//        Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
-//        restaurant.setType(type);
-//        restaurantRepository.save(restaurant);
-//        return Message.SUCCESS;
-//    }
-//
-//    @Override
-//    public Message changePassword(int restaurantId, String password) {
-//        Restaurant restaurant = restaurantRepository.findByRestaurantId(restaurantId);
-//        restaurant.setPassword(password);
-//        restaurantRepository.save(restaurant);
-//        return Message.SUCCESS;
-//    }
+    @Override
+    public Message updateAddress(Address address) {
+        addressRepository.save(address);
+        return Message.SUCCESS;
+    }
 
     @Override
     public Message login(String idCode, String password) {
@@ -90,20 +66,14 @@ public class RestaurantServiceBean implements RestaurantService {
     }
 
     @Override
-    public Message publishSingle(String idCode, Food food, int num) {
-        Restaurant restaurant = restaurantRepository.findByIdCode(idCode);
+    public Message publishSingle(String idCode, Food food) {
         foodRepository.save(food);
-        restaurant.getSingleNum().add(num + 1);
-        restaurantRepository.save(restaurant);
         return Message.SUCCESS;
     }
 
     @Override
-    public Message publishCombo(String idCode, ComboFood comboFood, int num) {
-        Restaurant restaurant = restaurantRepository.findByIdCode(idCode);
+    public Message publishCombo(String idCode, ComboFood comboFood) {
         comboFoodRepository.save(comboFood);
-        restaurant.getComboNum().add(num + 1);
-        restaurantRepository.save(restaurant);
         return Message.SUCCESS;
     }
 
@@ -116,6 +86,11 @@ public class RestaurantServiceBean implements RestaurantService {
     @Override
     public Restaurant findByIdCode(String idCode) {
         return restaurantRepository.findByIdCode(idCode);
+    }
+
+    @Override
+    public ArrayList<Address> findAddressByIdCode(String idCode) {
+        return addressRepository.findByCode(idCode);
     }
 
     @Override

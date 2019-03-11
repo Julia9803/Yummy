@@ -1,10 +1,11 @@
-package edu.nju.yummy.model;
+package edu.nju.yummy.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.io.Serializable;
+import java.util.Date;
 
 @Entity
 public class Food implements Serializable {
@@ -16,7 +17,11 @@ public class Food implements Serializable {
     private int foodId;
     private String name;
     private double price;
+    private String type;
     private String restaurantIdCode;
+    private Date startTime;
+    private Date endTime;
+    private int num;
 
     public int getFoodId() {
         return foodId;
@@ -42,11 +47,51 @@ public class Food implements Serializable {
         return price;
     }
 
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getType() {
+        return type;
+    }
+
     public String getRestaurantId() {
         return restaurantIdCode;
     }
 
     public void setRestaurantId(String restaurantId) {
         this.restaurantIdCode = restaurantId;
+    }
+
+    public String getRestaurantIdCode() {
+        return restaurantIdCode;
+    }
+
+    public void setRestaurantIdCode(String restaurantIdCode) {
+        this.restaurantIdCode = restaurantIdCode;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
+
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+    public int getNum() {
+        return num;
+    }
+
+    public void setNum(int num) {
+        this.num = num;
     }
 }

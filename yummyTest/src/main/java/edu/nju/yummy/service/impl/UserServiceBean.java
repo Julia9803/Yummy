@@ -2,9 +2,9 @@ package edu.nju.yummy.service.impl;
 
 import edu.nju.yummy.dao.AddressRepository;
 import edu.nju.yummy.dao.UserRepository;
-import edu.nju.yummy.model.Address;
+import edu.nju.yummy.entity.Address;
 import edu.nju.yummy.model.Message;
-import edu.nju.yummy.model.User;
+import edu.nju.yummy.entity.User;
 import edu.nju.yummy.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,6 +48,7 @@ public class UserServiceBean implements UserService {
             address1.setDistrict(address.getDistrict());
             address1.setDetail(address.getDetail());
             address1.setCode(email);
+            address1.setChosen(address.isChosen());
             addressRepository.save(address1);
             return Message.SUCCESS;
         }
@@ -75,6 +76,13 @@ public class UserServiceBean implements UserService {
     public Message changePassword(String email, String password) {
         User user = userRepository.findByEmail(email);
         user.setPassword(password);
+        return Message.SUCCESS;
+    }
+
+    @Override
+    public Message changeBankAccount(String email, String bankAccount) {
+        User user = userRepository.findByEmail(email);
+        user.setBankAccount(bankAccount);
         return Message.SUCCESS;
     }
 
@@ -120,6 +128,16 @@ public class UserServiceBean implements UserService {
     @Override
     public ArrayList<Address> findAddressByEmail(String email) {
         return addressRepository.findByCode(email);
+    }
+
+    @Override
+    public Message setAllNotChosen(String email) {
+        ArrayList<Address> addresses = addressRepository.findByCode(email);
+        for(Address address:addresses) {
+            address.setChosen(false);
+            addressRepository.save(address);
+        }
+        return Message.SUCCESS;
     }
 
 

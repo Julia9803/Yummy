@@ -3,18 +3,12 @@ package edu.nju.yummy.model;
 import java.util.HashMap;
 
 public class CompanyFinance {
-    public CompanyFinance() {}
-    public CompanyFinance(double totalIncome, HashMap<Integer,Double> ridIncome, HashMap<String,Double> uidPayment) {
-        this.totalIncome = totalIncome;
-        this.ridIncome = ridIncome;
-        this.uidPayment = uidPayment;
-    }
 
     private double totalIncome;
     /**
      * rid income
      */
-    private HashMap<Integer,Double> ridIncome;
+    private HashMap<String,Double> ridIncome;
     /**
      * uid payment
      */
@@ -23,6 +17,13 @@ public class CompanyFinance {
      * month income
      */
 //    private HashMap<String, Double> monthlyIncome;
+
+    public CompanyFinance() {}
+    public CompanyFinance(double totalIncome, HashMap<String,Double> ridIncome, HashMap<String,Double> uidPayment) {
+        this.totalIncome = totalIncome;
+        this.ridIncome = ridIncome;
+        this.uidPayment = uidPayment;
+    }
 
 
     public double getTotalIncome() {
@@ -33,11 +34,11 @@ public class CompanyFinance {
         this.totalIncome = totalIncome;
     }
 
-    public HashMap<Integer, Double> getRidIncome() {
+    public HashMap<String, Double> getRidIncome() {
         return ridIncome;
     }
 
-    public void setRidIncome(HashMap<Integer, Double> ridIncome) {
+    public void setRidIncome(HashMap<String, Double> ridIncome) {
         this.ridIncome = ridIncome;
     }
 

@@ -1,4 +1,4 @@
-package edu.nju.yummy.model;
+package edu.nju.yummy.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,16 +17,13 @@ public class Restaurant implements Serializable {
     private int restaurantId;
     private String idCode;
     private String name;
+    private String changeName;
     private String type;
+    private String changeType;
     private String password;
     private String phoneNumber;
     private boolean checked;
     private double income;
-//    private ArrayList<Food> singleFoods;
-//    private ArrayList<ComboFood> comboFoods;
-    private ArrayList<Integer> singleNum;
-    private ArrayList<Integer> comboNum;
-//    private ArrayList<OrderForm> orderForms;
 
     public void setRestaurantId(int restaurantId) {
         this.restaurantId = restaurantId;
@@ -52,12 +49,28 @@ public class Restaurant implements Serializable {
         this.name = name;
     }
 
+    public String getChangeName() {
+        return changeName;
+    }
+
+    public void setChangeName(String changeName) {
+        this.changeName = changeName;
+    }
+
     public String getType() {
         return type;
     }
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getChangeType() {
+        return changeType;
+    }
+
+    public void setChangeType(String changeType) {
+        this.changeType = changeType;
     }
 
     public String getPassword() {
@@ -90,21 +103,5 @@ public class Restaurant implements Serializable {
 
     public void setIncome(double income) {
         this.income = income;
-    }
-
-    public ArrayList<Integer> getComboNum() {
-        return comboNum;
-    }
-
-    public void setComboNum(ArrayList<Integer> comboNum) {
-        this.comboNum = comboNum;
-    }
-
-    public ArrayList<Integer> getSingleNum() {
-        return singleNum;
-    }
-
-    public void setSingleNum(ArrayList<Integer> singleNum) {
-        this.singleNum = singleNum;
     }
 }

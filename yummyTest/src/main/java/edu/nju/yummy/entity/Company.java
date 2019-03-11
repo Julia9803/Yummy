@@ -1,4 +1,4 @@
-package edu.nju.yummy.model;
+package edu.nju.yummy.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,7 +15,7 @@ public class Company implements Serializable {
     int id;
     double income;
     String month;
-    int rid;
+    String ridCode;
 
     public int getId() {
         return id;
@@ -41,11 +41,11 @@ public class Company implements Serializable {
         this.month = month;
     }
 
-    public int getRid() {
-        return rid;
+    public String getRidCode() {
+        return ridCode;
     }
 
-    public void setRid(int rid) {
-        this.rid = rid;
+    public void setRidCode(String ridCode) {
+        this.ridCode = ridCode;
     }
 }

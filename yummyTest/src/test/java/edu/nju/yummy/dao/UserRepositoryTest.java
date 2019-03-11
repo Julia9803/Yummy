@@ -1,6 +1,6 @@
 package edu.nju.yummy.dao;
 
-import edu.nju.yummy.model.User;
+import edu.nju.yummy.entity.User;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

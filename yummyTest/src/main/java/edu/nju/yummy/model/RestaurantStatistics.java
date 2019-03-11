@@ -3,8 +3,22 @@ package edu.nju.yummy.model;
 import java.util.HashMap;
 
 public class RestaurantStatistics {
+
+    private int resNum;
+    private double averageOrderNum;
+    private double averageCancelRate;
+
+    /**
+     * idCode cancelRate
+     */
+    private HashMap<String,Double> cancelRate;
+    /**
+     * idCode orderNumber
+     */
+    private HashMap<String,Integer> orderNumber;
+
     public RestaurantStatistics() {}
-    public RestaurantStatistics(int resNum, double averageOrderNum, double averageCancelRate, HashMap<Integer,Double> cancelRate, HashMap<Integer,Integer> orderNumber) {
+    public RestaurantStatistics(int resNum, double averageOrderNum, double averageCancelRate, HashMap<String,Double> cancelRate, HashMap<String,Integer> orderNumber) {
         this.resNum = resNum;
         this.averageOrderNum = averageOrderNum;
         this.averageCancelRate = averageCancelRate;
@@ -12,24 +26,11 @@ public class RestaurantStatistics {
         this.orderNumber = orderNumber;
     }
 
-    private int resNum;
-    private double averageOrderNum;
-    private double averageCancelRate;
-
-    /**
-     * rid cancelRate
-     */
-    private HashMap<Integer,Double> cancelRate;
-    /**
-     * rid orderNumber
-     */
-    private HashMap<Integer,Integer> orderNumber;
-
-    public HashMap<Integer, Integer> getOrderNumber() {
+    public HashMap<String, Integer> getOrderNumber() {
         return orderNumber;
     }
 
-    public void setOrderNumber(HashMap<Integer, Integer> orderNumber) {
+    public void setOrderNumber(HashMap<String, Integer> orderNumber) {
         this.orderNumber = orderNumber;
     }
 
@@ -57,11 +58,11 @@ public class RestaurantStatistics {
         this.resNum = resNum;
     }
 
-    public HashMap<Integer, Double> getCancelRate() {
+    public HashMap<String, Double> getCancelRate() {
         return cancelRate;
     }
 
-    public void setCancelRate(HashMap<Integer, Double> cancelRate) {
+    public void setCancelRate(HashMap<String, Double> cancelRate) {
         this.cancelRate = cancelRate;
     }
 }

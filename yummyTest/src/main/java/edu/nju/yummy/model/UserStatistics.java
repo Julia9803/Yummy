@@ -3,15 +3,6 @@ package edu.nju.yummy.model;
 import java.util.HashMap;
 
 public class UserStatistics {
-    public UserStatistics() {}
-    public UserStatistics(int userNum, double averageOrderNum, double averagePayedNum, HashMap<String,Double> paidRate, HashMap<Integer,Integer> gradeNumber, HashMap<String,Integer> orderNumber) {
-        this.userNum = userNum;
-        this.averageOrderNum = averageOrderNum;
-        this.averagePayedNum = averagePayedNum;
-        this.paidRate = paidRate;
-        this.gradeNumber = gradeNumber;
-        this.orderNumber = orderNumber;
-    }
 
     private int userNum;
     private double averageOrderNum;
@@ -28,6 +19,16 @@ public class UserStatistics {
      * uid orderNumber
      */
     private HashMap<String,Integer> orderNumber;
+
+    public UserStatistics() {}
+    public UserStatistics(int userNum, double averageOrderNum, double averagePayedNum, HashMap<String,Double> paidRate, HashMap<Integer,Integer> gradeNumber, HashMap<String,Integer> orderNumber) {
+        this.userNum = userNum;
+        this.averageOrderNum = averageOrderNum;
+        this.averagePayedNum = averagePayedNum;
+        this.paidRate = paidRate;
+        this.gradeNumber = gradeNumber;
+        this.orderNumber = orderNumber;
+    }
 
     public double getAverageOrderNum() {
         return averageOrderNum;

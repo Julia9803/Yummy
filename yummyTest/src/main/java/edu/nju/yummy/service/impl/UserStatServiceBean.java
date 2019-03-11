@@ -1,7 +1,11 @@
 package edu.nju.yummy.service.impl;
 
+import edu.nju.yummy.dao.AddressRepository;
+import edu.nju.yummy.dao.OrderFoodRepository;
 import edu.nju.yummy.dao.OrderRepository;
-import edu.nju.yummy.model.OrderForm;
+import edu.nju.yummy.entity.OrderFood;
+import edu.nju.yummy.entity.OrderForm;
+import edu.nju.yummy.model.HistoryOrderPresent;
 import edu.nju.yummy.service.UserStatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +16,10 @@ import java.util.ArrayList;
 public class UserStatServiceBean implements UserStatService {
     @Autowired
     OrderRepository orderRepository;
+    @Autowired
+    OrderFoodRepository orderFoodRepository;
+    @Autowired
+    AddressRepository addressRepository;
 
     @Override
     public ArrayList<OrderForm> checkUserOrderInfoByTime(String phoneNumber) {
@@ -25,7 +33,7 @@ public class UserStatServiceBean implements UserStatService {
 
     @Override
     public ArrayList<OrderForm> checkUserOrderInfoByRestaurant(String phoneNumber) {
-        return orderRepository.findByUserPhoneOrderByRestaurantId(phoneNumber);
+        return orderRepository.findByUserPhoneOrderByRestaurantIdCode(phoneNumber);
     }
 
     @Override
@@ -40,7 +48,7 @@ public class UserStatServiceBean implements UserStatService {
 
     @Override
     public ArrayList<OrderForm> checkUserCancelMealInfoByRestaurant(String phoneNumber) {
-        return orderRepository.findByUserPhoneAndCancelledTrueOrderByRestaurantIdDesc(phoneNumber);
+        return orderRepository.findByUserPhoneAndCancelledTrueOrderByRestaurantIdCodeDesc(phoneNumber);
     }
 
     @Override
@@ -55,6 +63,6 @@ public class UserStatServiceBean implements UserStatService {
 
     @Override
     public ArrayList<OrderForm> checkUserSpendInfoByRestaurant(String phoneNumber) {
-        return orderRepository.findByUserPhoneAndPayedTrueOrderByRestaurantId(phoneNumber);
+        return orderRepository.findByUserPhoneAndPayedTrueOrderByRestaurantIdCode(phoneNumber);
     }
 }

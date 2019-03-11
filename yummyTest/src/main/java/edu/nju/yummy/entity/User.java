@@ -1,4 +1,4 @@
-package edu.nju.yummy.model;
+package edu.nju.yummy.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -22,6 +22,7 @@ public class User implements Serializable {
     private boolean isCancelled;
     private double totalSpend;
     private int grade;
+    private String bankAccount;
 
     public int getUserId() {
         return userId;
@@ -85,5 +86,13 @@ public class User implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getBankAccount() {
+        return bankAccount;
+    }
+
+    public void setBankAccount(String bankAccount) {
+        this.bankAccount = bankAccount;
     }
 }

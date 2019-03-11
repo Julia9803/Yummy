@@ -1,16 +1,26 @@
 package edu.nju.yummy.controller;
 
 import edu.nju.yummy.dao.AddressRepository;
+import edu.nju.yummy.dao.FoodRepository;
+import edu.nju.yummy.entity.Address;
+import edu.nju.yummy.entity.ComboFood;
+import edu.nju.yummy.entity.Food;
+import edu.nju.yummy.entity.Restaurant;
 import edu.nju.yummy.model.*;
 import edu.nju.yummy.service.impl.RestaurantServiceBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 @Controller
 public class RestaurantController {
@@ -18,56 +28,26 @@ public class RestaurantController {
     RestaurantServiceBean restaurantServiceBean;
     @Autowired
     AddressRepository addressRepository;
+    @Autowired
+    FoodRepository foodRepository;
 
-    @RequestMapping(value = "/restaurant",method = RequestMethod.OPTIONS)
-    public void publishInfo(HttpServletRequest req, HttpSession session) {
-        String idCode = req.getParameter("idCode");
-        Food singleFood = (Food) session.getAttribute("singleFoodPack");
-        ComboFood comboFood = (ComboFood) session.getAttribute("comboFoodPack");
-        int singleNum = (int) session.getAttribute("singleNum");
-        int combeNum = (int) session.getAttribute("comboNum");
-        restaurantServiceBean.publishSingle(idCode,singleFood, singleNum);
-        restaurantServiceBean.publishCombo(idCode,comboFood, combeNum);
-    }
-
-    @RequestMapping(value = "/restaurant",method = RequestMethod.PUT)
-    public void updateRestaurant(HttpServletRequest req, HttpSession session) {
+    @RequestMapping(value = "/restaurantE",method = RequestMethod.POST)
+    public String updateRestaurant(HttpServletRequest req, HttpSession session) {
         String idCode = req.getParameter("idCode");
         String phoneNumber = req.getParameter("phoneNumber");
         String name = req.getParameter("name");
-        Address address = (Address) session.getAttribute("address");
         String password = req.getParameter("password");
         String type = req.getParameter("type");
-        restaurantServiceBean.update(idCode,phoneNumber,name,password,type);
+        Address address = new Address();
+        address.setCode(idCode);
+        address.setProvince(req.getParameter("province"));
+        address.setCity(req.getParameter("city"));
+        address.setDistrict(req.getParameter("district"));
+        address.setDetail(req.getParameter("detail"));
+        restaurantServiceBean.update(idCode,phoneNumber,name,password,type,address);
 
-
-//        if(name != null) {
-//            restaurantServiceBean.changeName(restaurantId,name);
-//        }
-//
-//        if(address != null) {
-//            restaurantServiceBean.changeAddress(restaurantId,address);
-//        }
-//
-//        if(password != null) {
-//            restaurantServiceBean.changePassword(restaurantId,password);
-//        }
-//
-//        if(phoneNumber != null) {
-//            restaurantServiceBean.changePhone(restaurantId,phoneNumber);
-//        }
-//
-//        if(type != null) {
-//            restaurantServiceBean.changeType(restaurantId,type);
-//        }
-//
-//        if(singleFoodPack != null) {
-//            restaurantServiceBean.publishSingle(restaurantId,singleFoodPack);
-//        }
-//
-//        if(comboFoodPack != null) {
-//            restaurantServiceBean.publishCombo(restaurantId,comboFoodPack);
-//        }
+        session.setAttribute("checkProcess","正在审核中");
+        return "restaurantEdit.jsp";
     }
 
     @RequestMapping(value = "/restaurant",method = RequestMethod.POST)
@@ -82,11 +62,30 @@ public class RestaurantController {
 
             Restaurant restaurant1 = new Restaurant();
             restaurant1.setPassword(password);
-            restaurant1.setType(type);
-            restaurant1.setName(name);
+            restaurant1.setChangeType(type);
+//            restaurant1.setType(type);
+            restaurant1.setChangeName(name);
+//            restaurant1.setName(name);
             restaurant1.setPhoneNumber(phoneNumber);
             restaurant1.setIdCode(idCode);
             restaurantServiceBean.register(restaurant1);
+
+            String province = req.getParameter("province");
+            String city = req.getParameter("city");
+            String district = req.getParameter("district");
+            String detail = req.getParameter("detail");
+
+            Address address = new Address();
+            address.setCode(idCode);
+            address.setChangeProvince(province);
+            address.setChangeCity(city);
+            address.setChangeDistrict(district);
+            address.setChangeDetail(detail);
+//            address.setProvince(province);
+//            address.setCity(city);
+//            address.setDistrict(district);
+//            address.setDetail(detail);
+            restaurantServiceBean.updateAddress(address);
 
             return "index.jsp";
         } else {
@@ -110,37 +109,84 @@ public class RestaurantController {
             session.setAttribute("res",res);
         }else if(message.equals(Message.SUCCESS)) {
             Restaurant restaurant = restaurantServiceBean.findByIdCode(idCode);
+            ArrayList<Address> addresses = restaurantServiceBean.findAddressByIdCode(idCode);
             session.setAttribute("restaurant",restaurant);
-            return "index.jsp";
+            session.setAttribute("address",addresses.get(0));
+            return "restaurantIndex.jsp";
         }
         return "restaurantLogin.jsp";
     }
 
     @RequestMapping(value = "/resCode",method = RequestMethod.GET)
+    @ResponseBody
     public String generateResId(ModelAndView model, HttpSession session) {
-        String resCode = String.valueOf(Math.random()*10000000).substring(0,7);
-        session.setAttribute("resCode",resCode);
-        model.addObject("resCode",resCode);
-        return "restaurantSignup.jsp";
+        return String.valueOf(Math.random()*10000000).substring(0,7);
     }
 
-    @RequestMapping(value = "/resAddress",method = RequestMethod.POST)
-    public String setResAddress(HttpServletRequest req, HttpSession session) {
-        String idCode = req.getParameter("code");
-        String province = req.getParameter("province");
-        String city = req.getParameter("city");
-        String district = req.getParameter("district");
-        String detail = req.getParameter("detail");
+    @RequestMapping(value = "/publishSingle",method = RequestMethod.POST)
+    public String publishSingle(HttpServletRequest req,HttpSession session) {
+        String idCode = req.getParameter("idCode");
+        String name = req.getParameter("name");
+        String type = req.getParameter("type");
+        double price = Double.parseDouble(req.getParameter("price"));
+        int totalNum = Integer.parseInt(req.getParameter("totalNum"));
+        Date startTime = transfer(req.getParameter("startTime"));
+        Date endTime = transfer(req.getParameter("endTime"));
 
-        Address address = new Address();
-        address.setCode(idCode);
-        address.setProvince(province);
-        address.setCity(city);
-        address.setDistrict(district);
-        address.setDetail(detail);
-        addressRepository.save(address);
-        session.setAttribute("address",address);
-        return "restaurantSignup.jsp";
+        Food food = new Food();
+        food.setName(name);
+        food.setPrice(price);
+        food.setType(type);
+        food.setStartTime(startTime);
+        food.setEndTime(endTime);
+        food.setNum(totalNum);
+        food.setRestaurantId(idCode);
+        restaurantServiceBean.publishSingle(idCode,food);
+
+        Restaurant restaurant = restaurantServiceBean.findByIdCode(idCode);
+        session.setAttribute("restaurant",restaurant);
+        return "restaurantPublish.jsp";
     }
 
+    @RequestMapping(value = "/publishCombo",method = RequestMethod.POST)
+    public String publishCombo(HttpServletRequest req, HttpSession session) {
+        ComboFood food = new ComboFood();
+        String idCode = req.getParameter("idCode");
+        int num = Integer.parseInt(req.getParameter("num"));
+        String name = null;
+        for (int i = 0; i < num; i++) {
+            if(i == 0)
+                name = req.getParameter("name"+i);
+            else
+                name = name+"和"+req.getParameter("name"+i);
+        }
+        double price = Double.parseDouble(req.getParameter("price"));
+        int totalNum = Integer.parseInt(req.getParameter("totalNum"));
+
+        Date startTime = transfer(req.getParameter("startTime"));
+        Date endTime = transfer(req.getParameter("endTime"));
+
+        food.setPrice(price);
+        food.setName(name);
+        food.setRestaurantIdCode(idCode);
+        food.setStartTime(startTime);
+        food.setEndTime(endTime);
+        food.setNum(totalNum);
+        restaurantServiceBean.publishCombo(idCode,food);
+
+        Restaurant restaurant = restaurantServiceBean.findByIdCode(idCode);
+        session.setAttribute("restaurant",restaurant);
+        return "restaurantPublish.jsp";
+    }
+
+    public Date transfer(String str) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = null;
+        try {
+            date = sdf.parse(str);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
 }

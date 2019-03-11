@@ -40,7 +40,7 @@
             <form class="am-form" action="/restaurant" method="get">
                 <fieldset>
                     <div class="am-form-group">
-                        <input type="text" class="" name="idCode" id="doc-ipt-email-1" placeholder="输入七位识别码">
+                        <input type="text" class="" name="code" id="doc-ipt-email-1" placeholder="输入七位识别码">
                     </div>
                     <div class="am-form-group">
                         <input type="password" class="" name="password" id="doc-ipt-pwd-1" placeholder="输入密码">

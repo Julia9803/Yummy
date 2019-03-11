@@ -1,4 +1,4 @@
-package edu.nju.yummy.model;
+package edu.nju.yummy.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -6,6 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 
 @Entity
 public class ComboFood implements Serializable {
@@ -15,8 +16,12 @@ public class ComboFood implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int comboId;
     private ArrayList<Integer> foodIds;
+    private String name;
     private double price;
     private String restaurantIdCode;
+    private Date startTime;
+    private Date endTime;
+    private int num;
 
 
     public ArrayList<Integer> getFoodIds() {
@@ -49,5 +54,37 @@ public class ComboFood implements Serializable {
 
     public void setRestaurantIdCode(String restaurantIdCode) {
         this.restaurantIdCode = restaurantIdCode;
+    }
+
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getNum() {
+        return num;
+    }
+
+    public void setNum(int num) {
+        this.num = num;
     }
 }

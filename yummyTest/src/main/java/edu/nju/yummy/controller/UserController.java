@@ -1,8 +1,8 @@
 package edu.nju.yummy.controller;
 
-import edu.nju.yummy.model.Address;
+import edu.nju.yummy.entity.Address;
 import edu.nju.yummy.model.Message;
-import edu.nju.yummy.model.User;
+import edu.nju.yummy.entity.User;
 import edu.nju.yummy.service.impl.UserServiceBean;
 import edu.nju.yummy.util.EmailManager;
 import org.apache.commons.mail.EmailException;
@@ -28,7 +28,7 @@ public class UserController {
     @RequestMapping(value = "/user",method = RequestMethod.POST)
     public String userSignUp(@RequestParam("phoneNumber") String phoneNumber, @RequestParam("password") String password
             , @RequestParam("name") String name, @RequestParam("email") String email, @RequestParam("code") String code,
-                             HttpServletRequest req, HttpSession session) {
+                             @RequestParam("bankAccount") String bankAccount, HttpServletRequest req, HttpSession session) {
         User user = userServiceBean.findByPhoneNumber(phoneNumber);
         if(user == null) {
 
@@ -39,6 +39,7 @@ public class UserController {
             user1.setEmail(email);
             user1.setGrade(0);
             user1.setPhoneNumber(phoneNumber);
+            user1.setBankAccount(bankAccount);
             userServiceBean.register(user1);
 
             return "index.jsp";
@@ -78,6 +79,7 @@ public class UserController {
         String name = req.getParameter("name");
         String isCancel = req.getParameter("cancel"); // Y N
         String password = req.getParameter("password");
+        String bankAccount = req.getParameter("bankAccount");
 
         if(name != null) {
             userServiceBean.changeName(email,name);
@@ -89,6 +91,10 @@ public class UserController {
 
         if(password != null) {
             userServiceBean.changePassword(email,password);
+        }
+
+        if(bankAccount != null) {
+            userServiceBean.changeBankAccount(email,bankAccount);
         }
 
         User user = userServiceBean.findByEmail(email);
@@ -107,6 +113,7 @@ public class UserController {
         String district = req.getParameter("district");
         String detail = req.getParameter("detail");
 
+
         Address address = new Address();
         address.setId(id);
         address.setProvince(province);
@@ -114,6 +121,8 @@ public class UserController {
         address.setDistrict(district);
         address.setDetail(detail);
         address.setCode(email);
+        userServiceBean.setAllNotChosen(email);
+        address.setChosen(true);
         userServiceBean.changeAddress(email,address);
 
         User user = userServiceBean.findByEmail(email);

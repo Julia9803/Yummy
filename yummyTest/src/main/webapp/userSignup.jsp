@@ -61,6 +61,9 @@
                     <div class="am-form-group">
                         <input type="text" class="" name="name" id="doc-vld-name" placeholder="输入用户名" required>
                     </div>
+                    <div class="am-form-group">
+                        <input type="text" class="" name="bankAccount" id="doc-vld-name" placeholder="输入银行账户" required>
+                    </div>
 					<div class="am-form-group">
 						<input type="password" class="" name="password" id="doc-ipt-pwd-1" placeholder="设置个密码吧" required>
 					</div>

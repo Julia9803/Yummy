@@ -1,6 +1,6 @@
 package edu.nju.yummy.dao;
 
-import edu.nju.yummy.model.Restaurant;
+import edu.nju.yummy.entity.Restaurant;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

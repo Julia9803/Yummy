@@ -1,9 +1,7 @@
 package edu.nju.yummy.service.impl;
 
-import edu.nju.yummy.dao.CompanyRepository;
-import edu.nju.yummy.dao.OrderRepository;
-import edu.nju.yummy.dao.RestaurantRepository;
-import edu.nju.yummy.dao.UserRepository;
+import edu.nju.yummy.dao.*;
+import edu.nju.yummy.entity.*;
 import edu.nju.yummy.model.*;
 import edu.nju.yummy.service.ManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,20 +21,102 @@ public class ManagerServiceBean implements ManagerService {
     UserRepository userRepository;
     @Autowired
     CompanyRepository companyRepository;
+    @Autowired
+    ManagerRepository managerRepository;
+    @Autowired
+    AddressRepository addressRepository;
 
     @Override
-    public ArrayList<Restaurant> getResChange() {
-        return restaurantRepository.findByCheckedFalse();
+    public Message register(String username, String password) {
+        Manager manager = new Manager();
+        manager.setUsername(username);
+        manager.setPassword(password);
+        managerRepository.save(manager);
+        return Message.SUCCESS;
     }
 
     @Override
-    public Message checkResChange(int rid, boolean res) {
-        Restaurant restaurant = restaurantRepository.findByRestaurantId(rid);
-        restaurant.setChecked(res);
-        restaurantRepository.save(restaurant);
-        if(!res) {
-            return Message.FAIL;
+    public Message login(String username, String password) {
+        Manager manager = managerRepository.findByUsername(username);
+        String password1 = manager.getPassword();
+        if(password.equals(password1)) {
+            return Message.SUCCESS;
         }
+        return Message.FAIL;
+    }
+
+    @Override
+    public ArrayList<ResCheck> getResChange() {
+        ArrayList<ResCheck> resChecks = new ArrayList<>();
+        ResCheck resCheck = new ResCheck();
+        ArrayList<Restaurant> restaurants = restaurantRepository.findByCheckedFalse();
+        if(restaurants == null) {
+            return null;
+        }
+
+        for(Restaurant restaurant:restaurants) {
+            resCheck.setIdCode(restaurant.getIdCode());
+            if(restaurant.getChangeName() != null)
+                resCheck.setName(restaurant.getChangeName());
+            else
+                resCheck.setName(restaurant.getName());
+            if(restaurant.getChangeType() != null)
+                resCheck.setType(restaurant.getChangeType());
+            else
+                resCheck.setType(restaurant.getType());
+            ArrayList<Address> addresses = addressRepository.findByCode(restaurant.getIdCode());
+            Address address = null;
+            if(addresses.size() == 0)
+                return null;
+            else
+                address = addresses.get(0);
+            resCheck.setAddress(address);
+            resChecks.add(resCheck);
+        }
+        return resChecks;
+    }
+
+    @Override
+    public Message checkResOK(String idCode) {
+        Restaurant restaurant = restaurantRepository.findByIdCode(idCode);
+        restaurant.setChecked(true);
+        if(restaurant.getChangeName() != null)
+            restaurant.setName(restaurant.getChangeName());
+        restaurant.setChangeName(null);
+        if(restaurant.getChangeType() != null)
+            restaurant.setType(restaurant.getChangeType());
+        restaurant.setChangeType(null);
+        restaurantRepository.save(restaurant);
+        Address address = addressRepository.findByCode(idCode).get(0);
+        if(address.getChangeProvince() != null)
+            address.setProvince(address.getChangeProvince());
+        address.setChangeProvince(null);
+        if(address.getChangeCity() != null)
+        address.setCity(address.getChangeCity());
+        address.setChangeCity(null);
+        if(address.getChangeDistrict() != null)
+            address.setDistrict(address.getChangeDistrict());
+        address.setChangeDistrict(null);
+        if(address.getChangeDetail() != null)
+            address.setDetail(address.getChangeDetail());
+        address.setChangeDetail(null);
+        addressRepository.save(address);
+        return Message.SUCCESS;
+    }
+
+    @Override
+    public Message checkResFail(String idCode) {
+        Restaurant restaurant = restaurantRepository.findByIdCode(idCode);
+        restaurant.setChecked(true);
+        restaurant.setChangeName(null);
+        restaurant.setChangeType(null);
+        restaurantRepository.save(restaurant);
+        Address address = addressRepository.findByCode(idCode).get(0);
+        address.setChangeProvince(null);
+        address.setChangeCity(null);
+        address.setChangeDistrict(null);
+        address.setChangeDetail(null);
+        addressRepository.save(address);
         return Message.SUCCESS;
     }
 
@@ -46,27 +126,30 @@ public class ManagerServiceBean implements ManagerService {
         int orderNum = (int) orderRepository.count();
         double averageOrderNum = orderNum/resNum;
 
-        ArrayList<OrderForm> cancelledForms = orderRepository.findAllByCancelledTrueOrderByRestaurantId();
+        ArrayList<OrderForm> cancelledForms = orderRepository.findAllByCancelledTrueOrderByRestaurantIdCode();
         int cancelNum = cancelledForms.size();
         double averageCancelRate = cancelNum/resNum;
 
         ArrayList<Restaurant> restaurants = restaurantRepository.findAll();
 
         /**
-         * rid orderNum
+         * idCode orderNum
          */
-        HashMap<Integer,Integer> resOrders = new HashMap<>();
+        HashMap<String,Integer> resOrders = new HashMap<>();
         /**
-         * rid cancelledNum
+         * idCode cancelledNum
          */
-        HashMap<Integer,Double> resCancelledRate = new HashMap<>();
+        HashMap<String,Double> resCancelledRate = new HashMap<>();
         for(Restaurant restaurant:restaurants) {
-            int rid = restaurant.getRestaurantId();
-            int resOrderNum = (int) orderRepository.countByRestaurantId(rid);
-            resOrders.put(rid,resOrderNum);
+            String idCode = restaurant.getIdCode();
+            int resOrderNum = (int) orderRepository.countByRestaurantIdCode(idCode);
+            resOrders.put(idCode,resOrderNum);
 
-            int resCancelledNum = (int) orderRepository.countByRestaurantIdAndCancelledTrue(rid);
-            resCancelledRate.put(rid,(double) resCancelledNum/resOrderNum);
+            int resCancelledNum = (int) orderRepository.countByRestaurantIdCodeAndCancelledTrue(idCode);
+            if(resOrderNum == 0)
+                resCancelledRate.put(idCode,0.0);
+            else
+                resCancelledRate.put(idCode,(double) resCancelledNum/resOrderNum);
         }
 
         return new RestaurantStatistics(resNum,averageOrderNum,averageCancelRate,resCancelledRate,resOrders);
@@ -94,10 +177,11 @@ public class ManagerServiceBean implements ManagerService {
         for(User user:users) {
             String phoneNumber = user.getPhoneNumber();
             int userOrderNum = (int) orderRepository.countByUserPhone(phoneNumber);
-            userOrders.put(phoneNumber,userOrderNum);
+            String email = userRepository.findByPhoneNumber(phoneNumber).getEmail();
+            userOrders.put(email,userOrderNum);
 
             int userPayedNum = (int) orderRepository.countByUserPhoneAndPayedTrue(phoneNumber);
-            userPayedRate.put(phoneNumber,(double) userPayedNum/userOrderNum);
+            userPayedRate.put(email,(double) userPayedNum/userOrderNum);
         }
 
         /**
@@ -125,15 +209,19 @@ public class ManagerServiceBean implements ManagerService {
         /**
          * rid income
          */
-        HashMap<Integer,Double> ridIncome = new HashMap<>();
+        HashMap<String,Double> ridIncome = new HashMap<>();
         ArrayList<Restaurant> restaurants = restaurantRepository.findAll();
         for (Restaurant restaurant:restaurants) {
-            int rid = restaurant.getRestaurantId();
-            Company company = companyRepository.findByRid(rid);
+            String idCode = restaurant.getIdCode();
+            ArrayList<Company> company = companyRepository.findByRidCode(idCode);
+            double income1 = 0;
             if(company != null) {
-                ridIncome.put(rid, company.getIncome());
+                for(Company company1:company) {
+                    income1 += company1.getIncome();
+                }
+                ridIncome.put(idCode, income1);
             } else {
-                ridIncome.put(rid, 0.00);
+                ridIncome.put(idCode, 0.00);
             }
         }
 
@@ -143,7 +231,7 @@ public class ManagerServiceBean implements ManagerService {
         HashMap<String,Double> uidPayment = new HashMap<>();
         ArrayList<User> users = userRepository.findAll();
         for(User user:users) {
-            uidPayment.put(user.getPhoneNumber(),user.getTotalSpend());
+            uidPayment.put(user.getEmail(),user.getTotalSpend());
         }
 
         /**
@@ -152,5 +240,57 @@ public class ManagerServiceBean implements ManagerService {
 //        HashMap<String, Double> monthlyIncome = new HashMap<>();
 
         return new CompanyFinance(income,ridIncome,uidPayment);
+    }
+
+    @Override
+    public ResChart getResChart() {
+        RestaurantStatistics restaurantStatistics = getResStat();
+        ArrayList<String> idCodes = new ArrayList<>();
+        ArrayList<Double> cancelRate = new ArrayList<>();
+        ArrayList<Integer> orderNumber = new ArrayList<>();
+        for(String idCode:restaurantStatistics.getCancelRate().keySet()) {
+            idCodes.add(idCode);
+            cancelRate.add(restaurantStatistics.getCancelRate().get(idCode));
+            orderNumber.add(restaurantStatistics.getOrderNumber().get(idCode));
+        }
+        return new ResChart(idCodes,cancelRate,orderNumber);
+    }
+
+    @Override
+    public UserChart getUserChart() {
+        UserStatistics userStatistics = getUserStat();
+        ArrayList<String> uid = new ArrayList<>();
+        ArrayList<Double> paidRate = new ArrayList<>();
+        ArrayList<Integer> grades = new ArrayList<>();
+        ArrayList<Integer> userNumber = new ArrayList<>();
+        ArrayList<Integer> orderNumber = new ArrayList<>();
+        for(String email:userStatistics.getPaidRate().keySet()) {
+            uid.add(email);
+            paidRate.add(userStatistics.getPaidRate().get(email));
+            orderNumber.add(userStatistics.getOrderNumber().get(email));
+        }
+        for(Integer grade:userStatistics.getGradeNumber().keySet()) {
+            grades.add(grade);
+            userNumber.add(userStatistics.getGradeNumber().get(grade));
+        }
+        return new UserChart(uid,paidRate,grades,userNumber,orderNumber);
+    }
+
+    @Override
+    public CompanyChart getCompanyChart() {
+        CompanyFinance companyFinance = getCompanyFinanceStat();
+        ArrayList<String> rid = new ArrayList<>();
+        ArrayList<Double> income = new ArrayList<>();
+        ArrayList<String> uid = new ArrayList<>();
+        ArrayList<Double> payment = new ArrayList<>();
+        for(String email:companyFinance.getUidPayment().keySet()) {
+            uid.add(email);
+            payment.add(companyFinance.getUidPayment().get(email));
+        }
+        for(String ridCode:companyFinance.getRidIncome().keySet()) {
+            rid.add(ridCode);
+            income.add(companyFinance.getRidIncome().get(ridCode));
+        }
+        return new CompanyChart(rid,income,uid,payment);
     }
 }

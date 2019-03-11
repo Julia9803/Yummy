@@ -1,4 +1,4 @@
-<%@ page import="edu.nju.yummy.model.User" %>
+<%@ page import="edu.nju.yummy.entity.User" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!doctype html>
 <html>

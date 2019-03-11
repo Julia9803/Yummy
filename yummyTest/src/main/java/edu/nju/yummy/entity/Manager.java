@@ -1,4 +1,4 @@
-package edu.nju.yummy.model;
+package edu.nju.yummy.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,7 +14,7 @@ public class Manager implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int managerId;
-    private String phoneNumber;
+    private String username;
     private String password;
 
     public int getManagerId() {
@@ -25,12 +25,12 @@ public class Manager implements Serializable {
         this.managerId = managerId;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getUsername() {
+        return username;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {

@@ -1,4 +1,4 @@
-<%@ page import="edu.nju.yummy.model.User" %>
+<%@ page import="edu.nju.yummy.entity.User" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!doctype html>
 <html>
@@ -78,10 +78,11 @@
                             <span>首页</span>
                         </a>
                     </li>
+
                     <li class="tpl-left-nav-item">
-                        <a href="chart.html" class="nav-link tpl-left-nav-link-list">
-                            <i class="am-icon-bar-chart"></i>
-                            <span>数据表</span>
+                        <a href="/userHistoryOrder" class="nav-link tpl-left-nav-link-list">
+                            <i class="am-icon-table"></i>
+                            <span>历史订单</span>
                         </a>
                     </li>
 
@@ -108,8 +109,8 @@
 
                     <li class="tpl-left-nav-item">
                         <a href="/userLogin" class="nav-link tpl-left-nav-link-list">
-                        <i class="am-icon-key"></i>
-                        <span>登录</span>
+                            <i class="am-icon-key"></i>
+                            <span>登录</span>
                         </a>
                     </li>
 

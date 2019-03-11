@@ -1,6 +1,6 @@
-<%@ page import="edu.nju.yummy.model.User" %>
+<%@ page import="edu.nju.yummy.entity.User" %>
 <%@ page import="java.util.ArrayList" %>
-<%@ page import="edu.nju.yummy.model.Address" %><%--
+<%@ page import="edu.nju.yummy.entity.Address" %><%--
   Created by IntelliJ IDEA.
   User: julia98
   Date: 2019/2/27
@@ -91,6 +91,13 @@
                 </li>
 
                 <li class="tpl-left-nav-item">
+                    <a href="/userHistoryOrder" class="nav-link tpl-left-nav-link-list">
+                        <i class="am-icon-table"></i>
+                        <span>历史订单</span>
+                    </a>
+                </li>
+
+                <li class="tpl-left-nav-item">
                     <a href="/userOrder" class="nav-link tpl-left-nav-link-list">
                         <i class="am-icon-table"></i>
                         <span>订单</span>
@@ -167,7 +174,21 @@
                             <div class="am-form-group">
                                 <label for="user-phone" class="am-u-sm-3 am-form-label">电话 / Telephone</label>
                                 <div class="am-u-sm-9">
-                                    <input type="tel" id="user-phone" name="phoneNumber" value="<%= user.getPhoneNumber()%>" placeholder="输入你的电话号码 / Telephone">
+                                    <input type="tel" id="user-phone" name="phoneNumber" value="<%= user.getPhoneNumber()%>" placeholder="输入你的电话号码 / Telephone" readonly>
+                                </div>
+                            </div>
+
+                            <div class="am-form-group">
+                                <label for="grade" class="am-u-sm-3 am-form-label">级别 / Grade</label>
+                                <div class="am-u-sm-9">
+                                    <input type="tel" id="grade" name="grade" value="<%= user.getGrade()%>" readonly>
+                                </div>
+                            </div>
+
+                            <div class="am-form-group">
+                                <label for="bankAccount" class="am-u-sm-3 am-form-label">银行账户 / BankAccount</label>
+                                <div class="am-u-sm-9">
+                                    <input type="tel" id="bankAccount" name="bankAccount" value="<%= user.getBankAccount()%>" placeholder="输入你的银行账号 / BankAccount">
                                 </div>
                             </div>
 
@@ -238,7 +259,7 @@
 
                             <div class="am-form-group">
                                 <div class="am-u-sm-9 am-u-sm-push-3">
-                                    <button type="submit" class="am-btn am-btn-primary">保存修改</button>
+                                    <button type="submit" class="am-btn am-btn-primary">保存修改并设为默认地址</button>
                                 </div>
                             </div>
 

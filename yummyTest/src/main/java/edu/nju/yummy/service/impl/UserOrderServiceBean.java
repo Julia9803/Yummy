@@ -1,6 +1,7 @@
 package edu.nju.yummy.service.impl;
 
 import edu.nju.yummy.dao.*;
+import edu.nju.yummy.entity.*;
 import edu.nju.yummy.model.*;
 import edu.nju.yummy.service.UserOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +22,93 @@ public class UserOrderServiceBean implements UserOrderService {
     UserRepository userRepository;
     @Autowired
     CompanyRepository companyRepository;
+    @Autowired
+    OrderFoodRepository orderFoodRepository;
+    @Autowired
+    FoodRepository foodRepository;
+    @Autowired
+    ComboFoodRepository comboFoodRepository;
+    @Autowired
+    AddressRepository addressRepository;
+    @Autowired
+    UserStatServiceBean userStatServiceBean;
 
     @Value("${edu.nju.yummy.order_time}")
     private int orderTime;
     @Value("${edu.nju.yummy.cancel_time}")
     private int cancelTime;
-    Timer timer = new Timer();
+
+    @Override
+    public ArrayList<RestaurantPresent> getResPresent(String userEmail) {
+        ArrayList<Restaurant> restaurants = restaurantRepository.findAll();
+        ArrayList<RestaurantPresent> presents = new ArrayList<>();
+        String idCode = null;
+        String resName = null;
+
+        for(Restaurant restaurant:restaurants) {
+            if(judgeDeliverable(userEmail,restaurant.getIdCode())) {
+                idCode = restaurant.getIdCode();
+                resName = restaurant.getName();
+                ArrayList<Food> foods = foodRepository.findByRestaurantIdCode(idCode);
+
+                ArrayList<Integer> foodIds = new ArrayList<>();
+                ArrayList<String> foodNames = new ArrayList<>();
+                ArrayList<Integer> foodNums = new ArrayList<>();
+                ArrayList<String> foodTypes = new ArrayList<>();
+                ArrayList<Double> foodPrices = new ArrayList<>();
+                for (Food food : foods) {
+                    if (judgeDateValid(food.getStartTime(), food.getEndTime())) {
+                        foodIds.add(food.getFoodId());
+                        foodNames.add(food.getName());
+                        foodNums.add(food.getNum());
+                        foodTypes.add(food.getType());
+                        foodPrices.add(food.getPrice());
+                    }
+                }
+
+                ArrayList<ComboFood> comboFoods = comboFoodRepository.findByRestaurantIdCode(idCode);
+                ArrayList<Integer> comboFoodIds = new ArrayList<>();
+                ArrayList<String> comboFoodNames = new ArrayList<>();
+                ArrayList<Integer> comboFoodNums = new ArrayList<>();
+                ArrayList<Double> comboFoodPrices = new ArrayList<>();
+                for (ComboFood comboFood : comboFoods) {
+                    if (judgeDateValid(comboFood.getStartTime(), comboFood.getEndTime())) {
+                        comboFoodIds.add(comboFood.getComboId());
+                        comboFoodNames.add(comboFood.getName());
+                        comboFoodNums.add(comboFood.getNum());
+                        comboFoodPrices.add(comboFood.getPrice());
+                    }
+                }
+
+
+                RestaurantPresent present = new RestaurantPresent(idCode, resName, foodNames, foodIds, foodNums, foodTypes, foodPrices, comboFoodNames, comboFoodIds, comboFoodNums, comboFoodPrices);
+                presents.add(present);
+            }
+        }
+        return presents;
+    }
+
+    /**
+     * 根据餐厅与用户地理位置距离判断是否在可配送范围内
+     * @param email
+     * @param idCode
+     * @return
+     */
+    private boolean judgeDeliverable(String email,String idCode) {
+        Address userAddress = addressRepository.findByCodeAndChosenTrue(email);
+        Address resAddress = addressRepository.findByCode(idCode).get(0);
+        if(userAddress.getProvince().equals(resAddress.getProvince())) {
+            if(userAddress.getCity().equals(resAddress.getCity())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean judgeDateValid(Date startTime, Date endTime) {
+        Date date = new Date();
+        return date.getTime() > startTime.getTime() && date.getTime() < endTime.getTime();
+    }
 
     /**
      * judge if restaurant stock is enough
@@ -36,40 +118,52 @@ public class UserOrderServiceBean implements UserOrderService {
      * @return
      */
     @Override
-    synchronized public Message orderMeal(OrderForm orderForm) {
+    synchronized public Message orderMeal(OrderForm orderForm, ArrayList<BagContent> contents) {
         // judge if stock enough
-        Restaurant restaurant = restaurantRepository.findByRestaurantId(orderForm.getRestaurantId());
-        ArrayList<Food> singleFoods = orderForm.getSingleFood();
-        ArrayList<ComboFood> comboFoods = orderForm.getComboFood();
-        if(singleFoods.size() != 0) {
-            for (int i = 0; i < singleFoods.size(); i++) {
-                if(restaurant.getSingleNum().get(i) <= orderForm.getSingleNum().get(i)) {
-                    return Message.FAIL;
+        Restaurant restaurant = restaurantRepository.findByIdCode(orderForm.getRestaurantIdCode());
+
+        OrderForm form = orderRepository.save(orderForm);
+        // add OrderFood
+        for(BagContent content:contents) {
+            OrderFood orderFood = new OrderFood();
+            orderFood.setFoodId(content.getFoodId());
+            orderFood.setName(content.getName());
+            orderFood.setOid(form.getOrderId());
+            orderFood.setOrderNum(content.getOrderNum());
+            orderFood.setPrice(content.getPrice());
+            orderFood.setType(content.getType());
+            orderFoodRepository.save(orderFood);
+        }
+
+        ArrayList<OrderFood> foods = orderFoodRepository.findByOid(orderForm.getOrderId());
+
+        if(foods.size() > 0) {
+            for (OrderFood food1 : foods) {
+                int orderNum = food1.getOrderNum();
+
+                Food food = foodRepository.findByFoodId(food1.getFoodId());
+                if(food != null) {
+                    int resNum = food.getNum();
+                    if (resNum < orderNum)
+                        return Message.FAIL;
+                    food.setNum(resNum - orderNum);
+                    foodRepository.save(food);
                 }
-                int num = restaurant.getSingleNum().get(i);
-                restaurant.getSingleNum().set(i,num - orderForm.getSingleNum().get(i));
+
+                ComboFood comboFood = comboFoodRepository.findByComboId(food1.getFoodId());
+                if(comboFood != null) {
+                    int resNum = comboFood.getNum();
+                    if (resNum < orderNum)
+                        return Message.FAIL;
+                    comboFood.setNum(resNum - orderNum);
+                    comboFoodRepository.save(comboFood);
+                }
             }
         }
 
-        if(comboFoods.size() != 0) {
-            for (int i = 0; i < comboFoods.size(); i++) {
-                if(restaurant.getComboNum().get(i) <= orderForm.getComboNum().get(i)) {
-                    return Message.FAIL;
-                }
-                int num = restaurant.getComboNum().get(i);
-                restaurant.getComboNum().set(i,num - orderForm.getComboNum().get(i));
-            }
-        }
-
-        // calculate total money
-        User user = userRepository.findByPhoneNumber(orderForm.getUserPhone());
-        int grade = user.getGrade();
-        orderForm.setTotalMoney(getDiscount(grade,orderForm.getOrderMoney()));
-
-        //calculate income for company and res
+        // calculate income for company and res
         calIncome(orderForm.getTotalMoney(),restaurant);
 
-        orderRepository.save(orderForm);
         orderClose(orderForm.getOrderId());
         return Message.SUCCESS;
     }
@@ -84,7 +178,7 @@ public class UserOrderServiceBean implements UserOrderService {
      * @return
      */
     @Override
-    public HashMap<Message,Double> cancelMeal(int orderId) {
+    public HashMap<Message,Double> cancelMeal(int orderId,String bankAccount) {
         HashMap<Message,Double> map = new HashMap<>();
         double refund = 0.00;
         OrderForm orderForm = orderRepository.findByOrderId(orderId);
@@ -98,16 +192,28 @@ public class UserOrderServiceBean implements UserOrderService {
             return map;
         } else if(orderForm.isDelivering()) {
             refund = Math.round(orderForm.getTotalMoney()/2*100)/100;
+            bankRefund(refund, bankAccount);
+            orderForm.setCancelled(true);
+            orderRepository.save(orderForm);
             map.put(Message.DELIVERING, refund);
             return map;
         } else if(!orderForm.isDelivering()) {
             refund = Math.round(orderForm.getTotalMoney()*100)/100;
+            bankRefund(refund, bankAccount);
+            orderForm.setCancelled(true);
+            orderRepository.save(orderForm);
             map.put(Message.SUCCESS,refund);
             return map;
         } else {
             map.put(Message.FAIL,refund);
             return map;
         }
+    }
+
+    private void bankRefund(double refund, String bankAccount) {
+        Bank bank = bankRepository.findByBankAccount(bankAccount);
+        bank.setBalance(bank.getBalance() + refund);
+        bankRepository.save(bank);
     }
 
     @Override
@@ -124,6 +230,9 @@ public class UserOrderServiceBean implements UserOrderService {
         if(bank.getPassword().equals(password)) {
             if(balance >= orderMoney) {
                 bank.setBalance(Math.round((balance - orderMoney)*100)/100);
+                bankRepository.save(bank);
+                form.setPayed(true);
+                orderRepository.save(form);
                 upGrade(phoneNumber, orderMoney);
                 return Message.SUCCESS;
             }
@@ -150,24 +259,103 @@ public class UserOrderServiceBean implements UserOrderService {
         return Message.FAIL;
     }
 
+    @Override
+    public ArrayList<HistoryOrderPresent> checkUserOrderInfo(String phoneNumber,String type) {
+        ArrayList<OrderForm> forms = null;
+        if(type == null)
+            forms = orderRepository.findByUserPhone(phoneNumber);
+        else {
+            switch (type) {
+                case "1":
+                    forms = userStatServiceBean.checkUserOrderInfoByTime(phoneNumber);
+                    break;
+                case "2":
+                    forms = userStatServiceBean.checkUserOrderInfoByMoney(phoneNumber);
+                    break;
+                case "3":
+                    forms = userStatServiceBean.checkUserOrderInfoByRestaurant(phoneNumber);
+                    break;
+                case "4":
+                    forms = userStatServiceBean.checkUserCancelMealInfoByTime(phoneNumber);
+                    break;
+                case "5":
+                    forms = userStatServiceBean.checkUserCancelMealInfoByMoney(phoneNumber);
+                    break;
+                case "6":
+                    forms = userStatServiceBean.checkUserCancelMealInfoByRestaurant(phoneNumber);
+                    break;
+                case "7":
+                    forms = userStatServiceBean.checkUserSpendInfoByTime(phoneNumber);
+                    break;
+                case "8":
+                    forms = userStatServiceBean.checkUserSpendInfoByMoney(phoneNumber);
+                    break;
+                case "9":
+                    forms = userStatServiceBean.checkUserSpendInfoByRestaurant(phoneNumber);
+                    break;
+                default:
+                    forms = orderRepository.findByUserPhone(phoneNumber);
+            }
+        }
+
+        ArrayList<HistoryOrderPresent> presents = new ArrayList<>();
+
+        for(OrderForm form:forms) {
+            HistoryOrderPresent present = new HistoryOrderPresent();
+            ArrayList<OrderFood> food = orderFoodRepository.findByOid(form.getOrderId());
+            if(form.isDelivered()) {
+                present.setDeliverState("已送达");
+            } else if(form.isDelivering()) {
+                present.setDeliverState("配送中");
+            } else if((!form.isDelivering()) && (!form.isDelivered())) {
+                present.setDeliverState("未配送");
+            }
+            present.setEnsureDelivered(form.isEnsureDelivered());
+            present.setFoods(food);
+            present.setOrderId(form.getOrderId());
+            present.setCancelled(form.isCancelled());
+            present.setOrderMoney(form.getOrderMoney());
+            present.setPayed(form.isPayed());
+            present.setTime(form.getTime());
+            present.setTotalMoney(form.getTotalMoney());
+            present.setRestaurantIdCode(form.getRestaurantIdCode());
+            present.setUserPhone(form.getUserPhone());
+            present.setUserAddress(addressRepository.findById(form.getUserAddressId()));
+
+            if(!form.isPayed() && !judgeDate(form.getTime(),orderTime)) {
+                present.setCancelled(true);
+                form.setCancelled(true);
+                orderRepository.save(form);
+            }
+            presents.add(present);
+        }
+
+        return presents;
+    }
+
     private boolean judgeDate(Date date1,int minute) {
         Date date2 = new Date();
         int standard = minute*60*1000;
-        int tmp = (int) (date1.getTime() - date2.getTime());
-        return tmp <= standard;
+        int tmp = (int) (date2.getTime() - date1.getTime());
+        return tmp < standard;
     }
 
     private void orderClose(int orderId) {
+        System.out.println("count time");
+        Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 OrderForm form = orderRepository.findByOrderId(orderId);
-                if(!form.isCancelled() && !form.isPayed() && judgeDate(form.getTime(),orderTime)) {
+                if((!form.isCancelled()) && (!form.isPayed()) && (!judgeDate(form.getTime(),orderTime))) {
                     form.setCancelled(true);
+                    orderRepository.save(form);
+                    System.out.println("order cancelled");
                 }
+                System.out.println("mission over");
                 timer.cancel();
             }
-        },2*60*60*1000);
+        },2*60*1000);
     }
 
     /**
@@ -192,9 +380,17 @@ public class UserOrderServiceBean implements UserOrderService {
         } else {
             user.setGrade(0);
         }
+        userRepository.save(user);
     }
 
-    private double getDiscount(int grade,double totalMoney) {
+    /**
+     * 根据用户级别进行打折优惠
+     * @param grade
+     * @param orderMoney
+     * @return
+     */
+    @Override
+    public double getDiscount(int grade,double orderMoney) {
         double discountRate = 1.00;
         switch (grade) {
             case 1:
@@ -213,7 +409,21 @@ public class UserOrderServiceBean implements UserOrderService {
                 discountRate = 0.75;
                 break;
         }
-        return totalMoney*discountRate;
+        return orderMoney - orderMoney*discountRate;
+    }
+
+    /**
+     * 计算订单原价
+     * @param contents
+     * @return
+     */
+    @Override
+    public double calOrderMoney(ArrayList<BagContent> contents) {
+        double orderMoney = 0;
+        for(BagContent content:contents) {
+            orderMoney += content.getPrice()*content.getOrderNum();
+        }
+        return orderMoney;
     }
 
     /**
@@ -229,6 +439,7 @@ public class UserOrderServiceBean implements UserOrderService {
         restaurantRepository.save(restaurant);
         Company company = new Company();
         company.setIncome(companyIncome);
+        company.setRidCode(restaurant.getIdCode());
         Calendar calendar = Calendar.getInstance();
         company.setMonth(calendar.get(Calendar.YEAR) + " " + calendar.get(Calendar.MONTH));
         companyRepository.save(company);

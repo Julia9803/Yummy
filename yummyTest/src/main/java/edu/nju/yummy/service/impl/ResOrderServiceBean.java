@@ -2,7 +2,7 @@ package edu.nju.yummy.service.impl;
 
 import edu.nju.yummy.dao.OrderRepository;
 import edu.nju.yummy.model.Message;
-import edu.nju.yummy.model.OrderForm;
+import edu.nju.yummy.entity.OrderForm;
 import edu.nju.yummy.service.ResOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 

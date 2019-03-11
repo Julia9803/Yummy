@@ -1,4 +1,5 @@
-<%--
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="edu.nju.yummy.model.RestaurantPresent" %><%--
   Created by IntelliJ IDEA.
   User: julia98
   Date: 2019/2/28
@@ -81,10 +82,11 @@
                         <span>首页</span>
                     </a>
                 </li>
+
                 <li class="tpl-left-nav-item">
-                    <a href="chart.html" class="nav-link tpl-left-nav-link-list">
-                        <i class="am-icon-bar-chart"></i>
-                        <span>数据表</span>
+                    <a href="/userHistoryOrder" class="nav-link tpl-left-nav-link-list">
+                        <i class="am-icon-table"></i>
+                        <span>历史订单</span>
                     </a>
                 </li>
 
@@ -131,69 +133,142 @@
 
 
     <div class="tpl-content-wrapper">
+        <%
+            ArrayList<RestaurantPresent> presents = (ArrayList<RestaurantPresent>) session.getAttribute("presents");
+            int size = 0;
+            for(RestaurantPresent present:presents) {
+                String idCode = present.getIdCode();
+        %>
+        <div class="row">
+            <div class="am-u-md-12 am-u-sm-12 row-mb">
+                <div class="tpl-portlet">
+                    <div class="tpl-portlet-title">
+                        <div class="tpl-caption font-red ">
+                            <i class="am-icon-bar-chart"></i>
+                            <span><%=present.getResName()%></span>
+                        </div>
+                    </div>
+                    <div class="tpl-scrollable">
 
-        <div class="tpl-portlet-components">
-            <div class="portlet-title">
-                <div class="caption font-green bold">
-                    <span class="am-icon-code"></span> 下订单
-                </div>
-            </div>
-            <div class="tpl-block ">
+                        <table class="am-table tpl-table">
+                            <thead>
+                            <tr class="tpl-table-uppercase">
+                                <th>食品Id</th>
+                                <th>食品名称</th>
+                                <th>食品类型</th>
+                                <th>食品总量</th>
+                                <th>食品单价</th>
+                                <th>选购数量</th>
+                                <th>加入购物车</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <%
+                                for (int i = 0; i < present.getFoodIds().size(); i++) {
+                                    int foodId = present.getFoodIds().get(i);
+                                    String name = present.getFoodNames().get(i);
+                                    String type = present.getFoodTypes().get(i);
+                                    int totalNum = present.getFoodNums().get(i);
+                                    double price = present.getFoodPrices().get(i);
+                                    int k = i + size + 1;
+                            %>
+                            <tr>
+                                <td>
+                                    <input type="number" id="idCode<%=k%>" name="foodId" value="<%=idCode%>" style="display:none;" readonly>
+                                    <input type="number" id="foodId<%=k%>" name="foodId" value="<%=foodId%>" readonly>
+                                </td>
+                                <td>
+                                    <input type="text" id="name<%=k%>" name="name" value="<%=name%>" readonly>
+                                </td>
+                                <td>
+                                    <input type="text" id="type<%=k%>" name="type" value="<%=type%>" readonly>
+                                </td>
+                                <td>
+                                    <input type="number" id="totalNum<%=k%>" name="totalNum" value="<%=totalNum%>" readonly>
+                                </td>
+                                <td>
+                                    <input type="text" id="price<%=k%>" name="price" value="<%=price%>" readonly>
+                                </td>
+                                <td>
+                                    <input type="number" id="orderNum<%=k%>" name="orderNum">
+                                </td>
+                                <td>
+                                    <button type="button" class="am-btn am-btn-default" onclick="addBag(<%=k%>)">添加</button>
+                                </td>
+                            </tr>
+                            <%
+                                }
+                            %>
+                            <%
+                                for (int i = 0; i < present.getComboFoodIds().size(); i++) {
+                                    int foodId = present.getComboFoodIds().get(i);
+                                    String name = present.getComboFoodNames().get(i);
+                                    String type = "套餐";
+                                    int totalNum = present.getComboFoodNums().get(i);
+                                    double price = present.getComboFoodPrices().get(i);
+                                    int j = i + size + present.getFoodIds().size();
+                            %>
+                            <tr>
+                                <td>
+                                    <input type="text" id="idCode<%=j%>" name="foodId" value="<%=idCode%>" style="display:none;" readonly>
+                                    <input type="text" id="foodId<%=j%>" name="foodId" value="<%=foodId%>" readonly>
+                                </td>
+                                <td>
+                                    <input type="text" id="name<%=j%>" name="name" value="<%=name%>" readonly>
+                                </td>
+                                <td>
+                                    <input type="text" id="type<%=j%>" name="type" value="<%=type%>" readonly>
+                                </td>
+                                <td>
+                                    <input type="text" id="totalNum<%=j%>" name="totalNum" value="<%=totalNum%>" readonly>
+                                </td>
+                                <td>
+                                    <input type="text" id="price<%=j%>" name="price" value="<%=price%>" readonly>
+                                </td>
+                                <td>
+                                    <input type="number" id="orderNum<%=j%>" name="orderNum">
+                                </td>
+                                <td>
+                                    <button type="button" class="am-btn am-btn-default" onclick="addBag(<%=j%>)">添加</button>
+                                </td>
+                            </tr>
+                            <%
+                                }
+                            %>
 
-                <div class="am-g tpl-amazeui-form">
-
-
-                    <div class="am-u-sm-12 am-u-md-9">
-                        <form class="am-form am-form-horizontal">
-                            <div class="am-form-group">
-                                <label for="user-name" class="am-u-sm-3 am-form-label">姓名 / Name</label>
-                                <div class="am-u-sm-9">
-                                    <input type="text" id="user-name" placeholder="姓名 / Name">
-                                    <small>输入你的名字，让我们记住你。</small>
-                                </div>
-                            </div>
-
-                            <div class="am-form-group">
-                                <label for="user-email" class="am-u-sm-3 am-form-label">电子邮件 / Email</label>
-                                <div class="am-u-sm-9">
-                                    <input type="email" id="user-email" placeholder="输入你的电子邮件 / Email">
-                                    <small>邮箱你懂得...</small>
-                                </div>
-                            </div>
-
-                            <div class="am-form-group">
-                                <label for="user-phone" class="am-u-sm-3 am-form-label">电话 / Telephone</label>
-                                <div class="am-u-sm-9">
-                                    <input type="tel" id="user-phone" placeholder="输入你的电话号码 / Telephone">
-                                </div>
-                            </div>
-
-                            <div class="am-form-group">
-                                <label for="password" class="am-u-sm-3 am-form-label">密码 / Password</label>
-                                <div class="am-u-sm-9">
-                                    <input type="number" pattern="[0-9]*" id="password" placeholder="输入你的密码">
-                                </div>
-                            </div>
-
-                            <div class="am-form-group">
-                                <div class="am-u-sm-9 am-u-sm-push-3">
-                                    <button type="button" class="am-btn am-btn-primary">保存修改</button>
-                                </div>
-                            </div>
-                        </form>
+                            <script>
+                                function addBag(i) {
+                                    let idCode = document.getElementById("idCode"+i).value;
+                                    let foodId = document.getElementById("foodId"+i).value;
+                                    let name = document.getElementById("name"+i).value;
+                                    let type = document.getElementById("type"+i).value;
+                                    let totalNum = document.getElementById("totalNum"+i).value;
+                                    let price = document.getElementById("price"+i).value;
+                                    let orderNum = document.getElementById("orderNum"+i).value;
+                                    if(parseInt(orderNum)>parseInt(totalNum)) {
+                                        alert("不可超卖!");
+                                        return;
+                                    }
+                                    $.ajax({
+                                        url:"/userMakeOrder/addBag?idCode="+idCode+"&foodId="+foodId+"&name="+name+"&type="+type+"&totalNum="+totalNum+"&price="+price+"&orderNum="+orderNum,
+                                        complete: function(msg) {
+                                            alert("添加成功!");
+                                        }
+                                    })
+                                }
+                            </script>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
 
+
         </div>
-
-
-
-
-
-
-
-
+        <%
+                size ++;
+            }
+        %>
 
 
     </div>
@@ -203,6 +278,7 @@
 
 <script src="js/jquery.min.js"></script>
 <script src="js/amazeui.min.js"></script>
+<script src="js/iscroll.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

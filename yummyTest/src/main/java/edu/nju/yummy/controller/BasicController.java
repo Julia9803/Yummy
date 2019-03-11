@@ -23,16 +23,6 @@ public class BasicController {
         return "useredit.jsp";
     }
 
-    @RequestMapping("/userOrder")
-    public String userOrder() {
-        return "userOrder.jsp";
-    }
-
-    @RequestMapping("/userMakeOrder")
-    public String userMakeOrder() {
-        return "userMakeOrder.jsp";
-    }
-
     @RequestMapping("/restaurantLogin")
     public String resLogin() {
         return "restaurantLogin.jsp";
@@ -46,6 +36,21 @@ public class BasicController {
     @RequestMapping("/restaurantEdit")
     public String resEdit() {
         return "restaurantEdit.jsp";
+    }
+
+    @RequestMapping(value = "/restaurantPublish")
+    public String publishInfo() {
+        return "restaurantPublish.jsp";
+    }
+
+    @RequestMapping("/managerLogin")
+    public String managerLogin() {
+        return "managerLogin.jsp";
+    }
+
+    @RequestMapping("/managerSignup")
+    public String managerSignup() {
+        return "managerSignup.jsp";
     }
 
     @RequestMapping("/test")

@@ -1,6 +1,6 @@
 package edu.nju.yummy.dao;
 
-import edu.nju.yummy.model.OrderForm;
+import edu.nju.yummy.entity.OrderForm;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,7 +11,7 @@ public interface OrderRepository extends CrudRepository<OrderForm,Integer> {
     OrderForm save(OrderForm orderForm);
     OrderForm findByOrderId(int oid);
     ArrayList<OrderForm> findByUserPhone(String phoneNumber);
-    ArrayList<OrderForm> findByRestaurantId(int rid);
+    ArrayList<OrderForm> findByRestaurantIdCode(String idCode);
 
     /**
      * user stat
@@ -20,40 +20,39 @@ public interface OrderRepository extends CrudRepository<OrderForm,Integer> {
      */
     ArrayList<OrderForm> findByUserPhoneOrderByTimeDesc(String phoneNumber);
     ArrayList<OrderForm> findByUserPhoneOrderByTotalMoneyDesc(String phoneNumber);
-    ArrayList<OrderForm> findByUserPhoneOrderByRestaurantId(String phoneNumber);
+    ArrayList<OrderForm> findByUserPhoneOrderByRestaurantIdCode(String phoneNumber);
     ArrayList<OrderForm> findByUserPhoneAndCancelledTrueOrderByTimeDesc(String phoneNumber);
     ArrayList<OrderForm> findByUserPhoneAndCancelledTrueOrderByTotalMoneyDesc(String phoneNumber);
-    ArrayList<OrderForm> findByUserPhoneAndCancelledTrueOrderByRestaurantIdDesc(String phoneNumber);
+    ArrayList<OrderForm> findByUserPhoneAndCancelledTrueOrderByRestaurantIdCodeDesc(String phoneNumber);
     ArrayList<OrderForm> findByUserPhoneAndPayedTrueOrderByTimeDesc(String phoneNumber);
     ArrayList<OrderForm> findByUserPhoneAndPayedTrueOrderByTotalMoneyDesc(String phoneNumber);
-    ArrayList<OrderForm> findByUserPhoneAndPayedTrueOrderByRestaurantId(String phoneNumber);
+    ArrayList<OrderForm> findByUserPhoneAndPayedTrueOrderByRestaurantIdCode(String phoneNumber);
 
     /**
      * res stat
-     * @param rid
+     * @param idCode
      * @return
      */
-    ArrayList<OrderForm> findByRestaurantIdAndDeliveringTrueOrDeliveredTrueOrderByTimeDesc(int rid);
-    ArrayList<OrderForm> findByRestaurantIdOrderByTimeDesc(int id);
-    ArrayList<OrderForm> findByRestaurantIdOrderByTotalMoneyDesc(int id);
-    ArrayList<OrderForm> findByRestaurantIdOrderByUserPhone(int id);
-    ArrayList<OrderForm> findByRestaurantIdAndCancelledTrueOrderByTimeDesc(int id);
-    ArrayList<OrderForm> findByRestaurantIdAndCancelledTrueOrderByTotalMoneyDesc(int id);
-    ArrayList<OrderForm> findByRestaurantIdAndCancelledTrueOrderByUserPhone(int id);
-    ArrayList<OrderForm> findByRestaurantIdAndPayedTrueOrderByTimeDesc(int id);
-    ArrayList<OrderForm> findByRestaurantIdAndPayedTrueOrderByTotalMoneyDesc(int id);
-    ArrayList<OrderForm> findByRestaurantIdAndPayedTrueOrderByUserPhone(int id);
+    ArrayList<OrderForm> findByRestaurantIdCodeOrderByTimeDesc(String idCode);
+    ArrayList<OrderForm> findByRestaurantIdCodeOrderByTotalMoneyDesc(String idCode);
+    ArrayList<OrderForm> findByRestaurantIdCodeOrderByUserPhone(String idCode);
+    ArrayList<OrderForm> findByRestaurantIdCodeAndCancelledTrueOrderByTimeDesc(String idCode);
+    ArrayList<OrderForm> findByRestaurantIdCodeAndCancelledTrueOrderByTotalMoneyDesc(String idCode);
+    ArrayList<OrderForm> findByRestaurantIdCodeAndCancelledTrueOrderByUserPhone(String idCode);
+    ArrayList<OrderForm> findByRestaurantIdCodeAndPayedTrueOrderByTimeDesc(String idCode);
+    ArrayList<OrderForm> findByRestaurantIdCodeAndPayedTrueOrderByTotalMoneyDesc(String idCode);
+    ArrayList<OrderForm> findByRestaurantIdCodeAndPayedTrueOrderByUserPhone(String idCode);
 
     /**
      * manager stat res
      * @param
      * @return
      */
-    ArrayList<OrderForm> findAllByCancelledTrueOrderByRestaurantId();
+    ArrayList<OrderForm> findAllByCancelledTrueOrderByRestaurantIdCode();
     ArrayList<OrderForm> findAllByPayedTrueOrderByUserPhone();
     long countByUserPhone(String phoneNumber);
-    long countByRestaurantId(int id);
+    long countByRestaurantIdCode(String idCode);
     long count();
-    long countByRestaurantIdAndCancelledTrue(int rid);
+    long countByRestaurantIdCodeAndCancelledTrue(String idCode);
     long countByUserPhoneAndPayedTrue(String phoneNumber);
 }
